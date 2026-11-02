@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { CountUp, FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
 import { Reveal } from "@/components/landing/Reveal";
+import { TalkButton } from "@/components/CustomEnquiry";
 import { Logo } from "@/components/Logo";
 import { SiteView } from "@/components/site/SiteView";
 import { DEMO, DEMO_MENU, DEMO_STORE } from "@/lib/demo";
-import { PRICES, YEARLY } from "@/lib/prices";
+import { PRICES } from "@/lib/prices";
 import { whatsappLoginReady } from "@/lib/whatsapp";
 import "./landing.css";
 
@@ -33,7 +34,7 @@ const FEATURES: { title: string; body: string; wide?: boolean; dark?: boolean }[
   { title: "Looks great when shared.", body: "Your link shows your photo and name in WhatsApp chats." },
   { title: "Price on request.", body: "Made to order? Customers ask for a quote instead." },
   { title: "Your own link.", body: "A fast website of your own, ready for your WhatsApp status and Instagram bio." },
-  { title: "Track every order.", body: "Online stores give each customer a link to see and change their order." },
+  { title: "Need something more?", body: "A cart, online orders or your own ideas. Ask for a custom website and we’ll build it with you." },
 ];
 
 export default function Home() {
@@ -187,12 +188,12 @@ export default function Home() {
         <section className="lp-designs" id="designs">
           <div className="lp-inner">
             <p className="lp-kicker" data-reveal>
-              Two designs
+              Two ways to start
             </p>
             <h2 data-reveal>
               Showcase is great.
               <br />
-              <Greatest>Online store is greatest.</Greatest>
+              <Greatest>Custom is made for you.</Greatest>
             </h2>
             <div className="lp-duo">
               <div className="lp-duo-col" data-reveal>
@@ -203,11 +204,9 @@ export default function Home() {
               </div>
               <div className="lp-duo-col best" data-reveal>
                 <Phone dynamic tilt="right" />
-                <h3>Online store</h3>
-                <p>Cart, checkout, delivery rules and order tracking. Your orders, organised.</p>
-                <p className="lp-price">
-                  {rs(PRICES.static)} + {rs(YEARLY)}/yr
-                </p>
+                <h3>Custom website</h3>
+                <p>Want a cart, online orders or something special? Tell us what you need and we’ll build it with you.</p>
+                <p className="lp-price">Let’s talk</p>
               </div>
             </div>
           </div>
@@ -254,21 +253,17 @@ export default function Home() {
                 </Link>
               </div>
               <div className="lp-plan best" data-reveal>
-                <span className="lp-badge">Most complete</span>
-                <h3>Online store</h3>
-                <p className="lp-plan-price">
-                  <CountUp to={PRICES.static} />
-                </p>
-                <p className="lp-plan-note">+ {rs(YEARLY)} a year for online orders</p>
+                <span className="lp-badge">Made for you</span>
+                <h3>Custom website</h3>
+                <p className="lp-plan-price">Let’s talk</p>
+                <p className="lp-plan-note">priced after we understand what you need</p>
                 <ul>
                   <li>Everything in Showcase</li>
-                  <li>Cart and checkout</li>
-                  <li>Delivery areas, charges, minimum order</li>
-                  <li>Order tracking and your orders list</li>
+                  <li>Cart and online orders, if you want them</li>
+                  <li>Your own features and design</li>
+                  <li>We call you first, then quote</li>
                 </ul>
-                <Link href="/create" className="lp-pill block">
-                  Start with Online store
-                </Link>
+                <TalkButton className="lp-pill block" label="Talk to us" from="home" />
               </div>
             </div>
             <p className="lp-fine" data-reveal>

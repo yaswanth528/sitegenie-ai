@@ -51,6 +51,7 @@ export default function AdminPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<Sort>("recent");
   const [open, setOpen] = useState<Row | null>(null);
+  const [enquiries, setEnquiries] = useState<{ id: string; createdAt: string; phone: string; name: string; note: string; from: string }[]>([]);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/admin/sites");
@@ -61,6 +62,7 @@ export default function AdminPage() {
       return setState("login");
     }
     setRows(data.sites);
+    fetch("/api/admin/enquiries").then((r) => (r.ok ? r.json() : { enquiries: [] })).then((d) => setEnquiries(d.enquiries ?? [])).catch(() => {});
     setStorage(data.backend);
     setState("ready");
   }, []);
@@ -282,6 +284,34 @@ export default function AdminPage() {
             </ul>
           </div>
         </section>
+
+        {enquiries.length > 0 && (
+          <section className="ad-shops">
+            <div className="ad-shops-head">
+              <h2>Custom website enquiries · {enquiries.length}</h2>
+            </div>
+            <ul className="ad-list">
+              {enquiries.map((e) => (
+                <li key={e.id} style={{ display: "flex", gap: 12, alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", padding: "10px 0" }}>
+                  <span>
+                    <strong>{e.name || "No name"}</strong> · <a href={`tel:${e.phone}`}>{e.phone}</a>
+                    {e.note && <span className="ad-muted"> · {e.note}</span>}
+                    <span className="ad-muted"> · {ago(e.createdAt)}</span>
+                  </span>
+                  <button
+                    className="ad-btn ghost sm"
+                    onClick={async () => {
+                      await fetch(`/api/admin/enquiries?id=${encodeURIComponent(e.id)}`, { method: "DELETE" });
+                      setEnquiries((x) => x.filter((y) => y.id !== e.id));
+                    }}
+                  >
+                    Done
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="ad-shops">
           <div className="ad-shops-head">

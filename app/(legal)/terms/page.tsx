@@ -36,7 +36,10 @@ export default function TermsPage() {
           <strong>Static website:</strong> {rupees(PRICES.static)} one-time.
         </li>
         <li>
-          <strong>Dynamic website (cart and online orders):</strong> {rupees(PRICES.static)} setup plus {rupees(YEARLY)} a year.
+          <strong>Custom website (cart, online orders or other special needs):</strong> priced after we talk to you about what you need.
+        </li>
+        <li>
+          <strong>Existing dynamic websites (cart and online orders):</strong> {rupees(PRICES.static)} setup plus {rupees(YEARLY)} a year.
           If the yearly plan isn’t renewed, online orders keep working for {GRACE_DAYS} days and then pause; your website
           stays online and customers can still order on WhatsApp.
         </li>

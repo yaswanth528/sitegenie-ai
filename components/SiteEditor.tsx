@@ -6,6 +6,7 @@ import { parseHours } from "@/lib/hours";
 import { BADGES, FESTIVALS, LAYOUTS, THEME_IDS, type Badge, type FestivalId, type Layout, type Media, type Product, type SiteContent, type Translation } from "@/lib/schema";
 import { THEMES } from "@/lib/themes";
 import { CompareTypes } from "./CompareTypes";
+import { TalkButton } from "./CustomEnquiry";
 import { ReadBack } from "./ReadBack";
 import { uploadFile } from "./upload";
 
@@ -119,16 +120,29 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
             <span>A beautiful catalogue. Customers send their list or ask about a product on WhatsApp.</span>
             <em>₹1,999 one-time</em>
           </button>
-          <button type="button" className={`choice ${d.siteType === "dynamic" ? "on" : ""}`} onClick={() => set({ siteType: "dynamic" })} aria-pressed={d.siteType === "dynamic"}>
-            <TypeSketch dynamic />
-            <strong>Dynamic · Online store</strong>
-            <span>Everything in Showcase, plus cart, checkout, delivery rules, order tracking and your orders list.</span>
-            <em>₹1,999 + ₹3,000/yr</em>
-          </button>
+          {d.siteType === "dynamic" ? (
+            // Websites already built as online stores keep their cart.
+            <button type="button" className="choice on" aria-pressed="true">
+              <TypeSketch dynamic />
+              <strong>Dynamic · Online store</strong>
+              <span>Everything in Showcase, plus cart, checkout, delivery rules, order tracking and your orders list.</span>
+              <em>₹1,999 + ₹3,000/yr</em>
+            </button>
+          ) : (
+            <div className="choice">
+              <TypeSketch dynamic />
+              <strong>Custom website</strong>
+              <span>Cart, online orders or your own ideas. Tell us what you need and we’ll build it with you.</span>
+              <em>Let’s talk</em>
+              <TalkButton className="btn sm" label="Talk to us" from="editor" />
+            </div>
+          )}
         </div>
-        <button type="button" className="btn ghost sm cmp-open" onClick={() => setComparing(true)}>
-          ⇄ Compare both designs side by side
-        </button>
+        {d.siteType === "dynamic" && (
+          <button type="button" className="btn ghost sm cmp-open" onClick={() => setComparing(true)}>
+            ⇄ Compare both designs side by side
+          </button>
+        )}
         {comparing && (
           <CompareTypes
             site={d}

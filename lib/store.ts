@@ -362,3 +362,21 @@ export async function commitToGitHub(path: string, content: string, message: str
   if (!res.ok) throw new Error(`GitHub backup failed: ${res.status}`);
   return true;
 }
+
+// ---------- "Custom website" enquiries (someone asked us to talk) ----------
+
+export type Enquiry = { id: string; createdAt: string; phone: string; name: string; note: string; from: string };
+
+export async function saveEnquiry(e: Enquiry): Promise<void> {
+  await writeDoc(`catalogues/enquiries/${e.id}.json`, e, "Custom website enquiry");
+}
+
+export async function listEnquiries(): Promise<Enquiry[]> {
+  const rows = await listDocs<Enquiry>("catalogues/enquiries");
+  return rows.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function deleteEnquiry(id: string): Promise<void> {
+  if (!/^[a-z0-9-]{6,40}$/.test(id)) return;
+  await deleteDoc(`catalogues/enquiries/${id}.json`);
+}
