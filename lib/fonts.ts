@@ -11,6 +11,8 @@ import {
   Mulish,
   Noto_Sans_Devanagari,
   Noto_Sans_Kannada,
+  Noto_Sans_Tamil,
+  Noto_Sans_Telugu,
   Nunito_Sans,
   Playfair_Display,
   Sora,
@@ -29,8 +31,10 @@ const mulish = Mulish({ subsets: ["latin"], variable: "--f-mulish", display: "sw
 const archivo = Archivo({ subsets: ["latin"], variable: "--f-archivo", display: "swap" });
 // Indian scripts, used as fallbacks in every theme so Kannada and Hindi copy renders well.
 const kannada = Noto_Sans_Kannada({ subsets: ["kannada"], variable: "--f-kannada", display: "swap" });
+const tamil = Noto_Sans_Tamil({ subsets: ["tamil"], variable: "--f-tamil", display: "swap" });
+const telugu = Noto_Sans_Telugu({ subsets: ["telugu"], variable: "--f-telugu", display: "swap" });
 const devanagari = Noto_Sans_Devanagari({ subsets: ["devanagari"], variable: "--f-devanagari", display: "swap" });
 
-export const fontVariables = [cormorant, jost, fraunces, nunito, baloo, hind, sora, manrope, playfair, mulish, archivo, kannada, devanagari]
+export const fontVariables = [cormorant, jost, fraunces, nunito, baloo, hind, sora, manrope, playfair, mulish, archivo, kannada, devanagari, tamil, telugu]
   .map((f) => f.variable)
   .join(" ");

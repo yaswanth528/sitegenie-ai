@@ -2,11 +2,13 @@
 // The big round mic on the "Tell us about your business" screen. While recording, the bars
 // follow the owner's voice live (Web Audio analyser), so they can see it's listening.
 import { useEffect, useRef } from "react";
+import { useT } from "../I18nProvider";
 import { useSpeech } from "../useSpeech";
 
 const BARS = 32;
 
 export function MicOrb({ language, onText, onAudio }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void }) {
+  const t = useT();
   const { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds } = useSpeech(language, onText, onAudio);
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
   const orb = useRef<HTMLButtonElement>(null);
@@ -44,7 +46,7 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
     };
   }, [stream]);
 
-  if (!supported) return <p className="cf-muted">This browser can’t record audio. Type below instead.</p>;
+  if (!supported) return <p className="cf-muted">{t("micUnsupported")}</p>;
   const recording = state === "recording";
   const left = maxSeconds - seconds;
   return (
@@ -56,7 +58,7 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
         onClick={recording ? stop : start}
         disabled={state === "transcribing"}
         aria-pressed={recording}
-        aria-label={recording ? "Stop recording" : "Start recording"}
+        aria-label={recording ? t("micStop") : t("micStart")}
       >
         <span className="cf-orb-ring" aria-hidden="true" />
         <span className="cf-orb-ring r2" aria-hidden="true" />
@@ -70,7 +72,7 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
         )}
       </button>
       {recording && (
-        <button type="button" className="cf-mic-x" onClick={cancel} aria-label="Cancel recording and discard it" title="Cancel and discard">
+        <button type="button" className="cf-mic-x" onClick={cancel} aria-label={t("micCancelAria")} title={t("micCancelTitle")}>
           ×
         </button>
       )}
@@ -81,10 +83,10 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
       </div>
       <p className="cf-mic-label" aria-live="polite">
         {recording
-          ? `Listening · 0:${String(seconds).padStart(2, "0")}${left <= 10 ? ` · ${left}s left` : ""} · tap to stop`
+          ? t("micListening", { time: `0:${String(seconds).padStart(2, "0")}`, left: left <= 10 ? t("micLeft", { s: left }) : "" })
           : state === "transcribing"
-            ? "Writing down what you said…"
-            : "Tap and speak"}
+            ? t("micWriting")
+            : t("micTap")}
       </p>
       {error && <p className="cf-error">{error}</p>}
     </div>

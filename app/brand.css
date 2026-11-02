@@ -294,3 +294,64 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 .talk-sheet .hint { color: #4a6470; }
 .talk-sheet .error { color: #b3261e; }
 .talk-sheet textarea { font: inherit; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(13, 43, 54, 0.25); background: #fff; color: #0d2b36; }
+
+/* ---- Interface language (2026-11-02) ---- */
+/* Language chooser: a visible pill with a globe, used in the home and create bars. */
+.lang-switch { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 10px; height: 36px; border-radius: 999px; border: 1.5px solid rgba(13, 43, 54, 0.3); background: #fff; color: #0d2b36; flex-shrink: 0; }
+.lang-switch svg { flex-shrink: 0; }
+.lang-switch select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: inherit; font: inherit; font-weight: 700; font-size: 0.9rem; padding: 0 14px 0 0; min-height: 0; height: 100%; cursor: pointer; max-width: 9ch;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 7px) 55%, calc(100% - 3px) 55%; background-size: 4px 4px; background-repeat: no-repeat; }
+.lang-switch select:focus-visible { outline: 3px solid rgba(14, 143, 143, 0.5); outline-offset: 4px; border-radius: 6px; }
+.lang-switch:hover { border-color: #0b5d7a; }
+.cf-nav-row .lang-switch { margin-left: auto; }
+.cf-nav-row .cf-track { margin-left: 0; }
+.review-bar .lang-switch { margin-left: auto; }
+@media (max-width: 520px) { .cf-nav-row { gap: 8px; } .lang-switch { padding: 0 8px; } }
+
+/* Offer to match the page language to the chosen speech language (never switches on its own). */
+.cf-offer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 10px; padding: 10px 14px; border-radius: 16px; background: #e4f2f2; border: 1px solid rgba(13, 43, 54, 0.22); color: #0d2b36; font-size: 0.92rem; font-weight: 600; text-align: center; }
+.cf-offer button { font: inherit; font-weight: 700; border-radius: 999px; padding: 6px 14px; cursor: pointer; min-height: 36px; }
+.cf-offer-yes { border: 0; background: linear-gradient(135deg, #0b5d7a, #0e8f8f); color: #fff; }
+.cf-offer-no { border: 1.5px solid rgba(13, 43, 54, 0.3); background: #fff; color: #0d2b36; }
+
+/* Home headline: the shop word was teal #0e8f8f on pearl (about 3.5:1). Darker teal is about 6:1,
+   and always fully opaque once it has settled. */
+.lp .lp-line em { color: #085f5f; }
+.lp .lp-line { text-wrap: balance; }
+
+/* Indian scripts: web fonts, and wrapping that never overflows or clips. */
+html[lang="kn"] :is(body, button, input, select, textarea) { font-family: var(--f-kannada), system-ui, "Segoe UI", sans-serif; }
+html[lang="hi"] :is(body, button, input, select, textarea) { font-family: var(--f-devanagari), system-ui, "Segoe UI", sans-serif; }
+html[lang="ta"] :is(body, button, input, select, textarea) { font-family: var(--f-tamil), system-ui, "Segoe UI", sans-serif; }
+html[lang="te"] :is(body, button, input, select, textarea) { font-family: var(--f-telugu), system-ui, "Segoe UI", sans-serif; }
+html:not([lang="en"]) :is(.lp-h1, .lp-line, .cf h1, .rv h1, h2, h3) { line-height: 1.25; letter-spacing: normal; overflow-wrap: anywhere; }
+html:not([lang="en"]) .lp-h1 { font-size: clamp(2.4rem, 8.5vw, 6rem); }
+html:not([lang="en"]) .lp-lines { font-size: 0.5em; letter-spacing: normal; }
+html:not([lang="en"]) .lp-line em { white-space: normal; }
+html:not([lang="en"]) :is(.lp-pill, .cf-pill, .btn, .cf-track li, .seg button, .choice, .lp-kicker) { white-space: normal; line-height: 1.25; }
+html:not([lang="en"]) .lp-pill, html:not([lang="en"]) .cf-pill { min-height: 44px; height: auto; padding-top: 10px; padding-bottom: 10px; }
+
+/* Phones: room for the language chooser. The header "Make my website" pill is hidden because the
+   hero shows the same button right below; /create shows step numbers only (the page says which step). */
+@media (max-width: 520px) {
+  .lp-nav-row { gap: 12px; }
+  .lp-nav-cta { gap: 12px; }
+  .lp-nav-cta .lp-pill.sm { display: none; }
+  .cf-track li { font-size: 0; padding: 3px; gap: 0; }
+  .cf-track li span { font-size: 0.74rem; }
+}
+/* Long unbroken words in Indian scripts must wrap inside their card, never push it wider. */
+.lp-plans > *, .lp-duo > *, .lp-flow > *, .lp-bento > *, .lp-tile-wrap { min-width: 0; }
+html:not([lang="en"]) :is(p, li, h1, h2, h3, small, label, span, a, em) { overflow-wrap: anywhere; }
+@media (max-width: 520px) {
+  .cf-track { gap: 3px; }
+  .cf-track li { padding: 0; }
+  .cf-track li span { width: 20px; height: 20px; }
+  .cf-nav-row { padding-left: 14px; padding-right: 14px; }
+}
+@media (max-width: 520px) {
+  .cf .cf-track { gap: 3px; }
+  .cf .cf-track li { font-size: 0; padding: 0; gap: 0; }
+  .cf .cf-track li span { font-size: 0.74rem; width: 20px; height: 20px; }
+  .cf .cf-nav-row, .rv .review-bar { padding-left: 14px; padding-right: 14px; }
+}

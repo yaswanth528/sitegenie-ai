@@ -2,10 +2,12 @@ import Link from "next/link";
 import { CountUp, FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
 import { Reveal } from "@/components/landing/Reveal";
 import { TalkButton } from "@/components/CustomEnquiry";
+import { LanguageSwitcher, T } from "@/components/I18nProvider";
 import { Logo } from "@/components/Logo";
 import { SiteView } from "@/components/site/SiteView";
 import { DEMO, DEMO_MENU, DEMO_STORE } from "@/lib/demo";
 import { PRICES } from "@/lib/prices";
+import type { UiKey } from "@/lib/uitext";
 import { whatsappLoginReady } from "@/lib/whatsapp";
 import "./landing.css";
 
@@ -24,17 +26,17 @@ function Phone({ dynamic = false, tilt, site = DEMO, className = "" }: { dynamic
   );
 }
 
-const FEATURES: { title: string; body: string; wide?: boolean; dark?: boolean }[] = [
-  { title: "Change it by talking.", body: "“Make it look more professional.” “Silk saree is sold out.” Say it, see it, undo it.", wide: true, dark: true },
-  { title: "Orders on WhatsApp.", body: "Customers tap once. The order lands in your chat, ready to confirm." },
-  { title: "UPI, built in.", body: "GPay, PhonePe or Paytm. Money goes straight to you." },
-  { title: "Open now.", body: "Your hours become a live “Open now · closes 9 pm” badge." },
-  { title: "Two languages.", body: "Customers switch between English and Kannada, Hindi or more." },
-  { title: "Festival ready.", body: "Diwali, Eid, Pongal, Christmas. One tap puts your offer on top.", wide: true },
-  { title: "Looks great when shared.", body: "Your link shows your photo and name in WhatsApp chats." },
-  { title: "Price on request.", body: "Made to order? Customers ask for a quote instead." },
-  { title: "Your own link.", body: "A fast website of your own, ready for your WhatsApp status and Instagram bio." },
-  { title: "Need something more?", body: "A cart, online orders or your own ideas. Ask for a custom website and we’ll build it with you." },
+const FEATURES: { id: number; dark?: boolean; wide?: boolean }[] = [
+  { id: 1, dark: true, wide: true },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6, wide: true },
+  { id: 7 },
+  { id: 8 },
+  { id: 9 },
+  { id: 10 },
 ];
 
 export default function Home() {
@@ -46,18 +48,19 @@ export default function Home() {
         <div className="lp-nav-row">
           <Logo />
           <nav aria-label="Sections">
-            <a href="#how">How it works</a>
-            <a href="#designs">Designs</a>
-            <a href="#pricing">Pricing</a>
+            <a href="#how"><T k="navHow" /></a>
+            <a href="#designs"><T k="navDesigns" /></a>
+            <a href="#pricing"><T k="navPricing" /></a>
           </nav>
           <div className="lp-nav-cta">
+            <LanguageSwitcher />
             {whatsappLoginReady() && (
               <Link href="/login" className="lp-link">
-                Log in
+                <T k="navLogin" />
               </Link>
             )}
             <Link href="/create" className="lp-pill sm">
-              Make my website
+              <T k="makeMyWebsite" />
             </Link>
           </div>
         </div>
@@ -80,37 +83,37 @@ export default function Home() {
                 <i />
               </span>
               <span>
-                <small>You said</small>“Cotton sarees for ₹1,200…”
+                <small><T k="fl1Small" /></small><T k="fl1Text" />
               </span>
             </div>
             <div className="lp-float f2">
               <span className="lp-float-icon ok">✓</span>
               <span>
-                <small>Website is live</small>yourshop.pages.dev
+                <small><T k="fl2Small" /></small>yourshop.pages.dev
               </span>
             </div>
             <div className="lp-float f3">
               <span className="lp-float-icon">₹</span>
               <span>
-                <small>UPI payment</small>₹899 received
+                <small><T k="fl3Small" /></small><T k="fl3Text" />
               </span>
             </div>
             <div className="lp-float f4">
               <span className="lp-float-icon dot" />
               <span>
-                <small>Your hours</small>Open now · closes 9 pm
+                <small><T k="fl4Small" /></small><T k="fl4Text" />
               </span>
             </div>
             <div className="lp-float f5">
               <span className="lp-float-icon">+</span>
               <span>
-                <small>New order</small>Cotton saree × 2 · ₹2,400
+                <small><T k="fl5Small" /></small><T k="fl5Text" />
               </span>
             </div>
             <div className="lp-float f6">
               <span className="lp-float-icon">⇄</span>
               <span>
-                <small>Two languages</small>English · ಕನ್ನಡ
+                <small><T k="fl6Small" /></small>English · ಕನ್ನಡ
               </span>
             </div>
           </div>
@@ -119,15 +122,15 @@ export default function Home() {
               <i key={i} style={{ ["--x" as string]: `${(i * 37) % 100}%`, ["--d" as string]: `${(i % 7) * 1.1}s`, ["--t" as string]: `${7 + (i % 5)}s` }} />
             ))}
           </div>
-          <Kicker text="Websites for small shops" />
+          <Kicker k="heroKicker" />
           <HeroTitle />
-          <HeroSub text="Talk about your shop for 30 seconds, in your language. Get a beautiful website with your products, prices and ordering." />
+          <HeroSub k="heroSub" />
           <div className="lp-ctas" data-reveal>
             <Link href="/create" className="lp-pill">
-              Make my website
+              <T k="makeMyWebsite" />
             </Link>
             <a href="#how" className="lp-pill ghost">
-              See how it works
+              <T k="seeHow" />
             </a>
           </div>
           <div className="lp-hero-device" data-reveal>
@@ -144,18 +147,18 @@ export default function Home() {
         <section className="lp-dark" id="how">
           <div className="lp-inner">
             <p className="lp-kicker" data-reveal>
-              How it works
+              <T k="howKicker" />
             </p>
             <h2 data-reveal>
-              You talk.
+              <T k="howTitle1" />
               <br />
-              <span className="lp-dim">We build.</span>
+              <span className="lp-dim"><T k="howTitle2" /></span>
             </h2>
             <div className="lp-flow">
               <div className="lp-flow-step" data-reveal>
                 <span className="lp-num">01</span>
-                <h3>Speak</h3>
-                <p>Your shop’s name, what you sell and the prices. Kannada, Hindi, English, or a mix.</p>
+                <h3><T k="step1Title" /></h3>
+                <p><T k="step1Body" /></p>
                 <div className="lp-wave" aria-hidden="true">
                   {Array.from({ length: 28 }, (_, i) => (
                     <i key={i} style={{ animationDelay: `${(i % 7) * 0.12}s` }} />
@@ -164,19 +167,19 @@ export default function Home() {
               </div>
               <div className="lp-flow-step" data-reveal>
                 <span className="lp-num">02</span>
-                <h3>Check</h3>
-                <p>A designed website appears in about a minute. Fix a price, pick a look, or just say what to change.</p>
+                <h3><T k="step2Title" /></h3>
+                <p><T k="step2Body" /></p>
                 <div className="lp-chips" aria-hidden="true">
-                  <span>Theme</span>
-                  <span>Photos</span>
-                  <span>Prices</span>
-                  <span>Hours</span>
+                  <span><T k="chipTheme" /></span>
+                  <span><T k="chipPhotos" /></span>
+                  <span><T k="chipPrices" /></span>
+                  <span><T k="chipHours" /></span>
                 </div>
               </div>
               <div className="lp-flow-step" data-reveal>
                 <span className="lp-num">03</span>
-                <h3>Share</h3>
-                <p>Your own link for WhatsApp status and Instagram. Orders come straight to your WhatsApp.</p>
+                <h3><T k="step3Title" /></h3>
+                <p><T k="step3Body" /></p>
                 <div className="lp-link-demo" aria-hidden="true">
                   <span>●</span> yourshop.pages.dev
                 </div>
@@ -188,25 +191,25 @@ export default function Home() {
         <section className="lp-designs" id="designs">
           <div className="lp-inner">
             <p className="lp-kicker" data-reveal>
-              Two ways to start
+              <T k="designsKicker" />
             </p>
             <h2 data-reveal>
-              Showcase is great.
+              <T k="designsTitle1" />
               <br />
-              <Greatest>Custom is made for you.</Greatest>
+              <Greatest><T k="designsTitle2" /></Greatest>
             </h2>
             <div className="lp-duo">
               <div className="lp-duo-col" data-reveal>
                 <Phone tilt="left" />
-                <h3>Showcase</h3>
-                <p>A beautiful catalogue. Customers send their list or ask about a product on WhatsApp.</p>
-                <p className="lp-price">{rs(PRICES.static)} one-time</p>
+                <h3><T k="showcase" /></h3>
+                <p><T k="showcaseBody" /></p>
+                <p className="lp-price"><T k="priceOneTime" vars={{ price: rs(PRICES.static) }} /></p>
               </div>
               <div className="lp-duo-col best" data-reveal>
                 <Phone dynamic tilt="right" />
-                <h3>Custom website</h3>
-                <p>Want a cart, online orders or something special? Tell us what you need and we’ll build it with you.</p>
-                <p className="lp-price">Let’s talk</p>
+                <h3><T k="customSite" /></h3>
+                <p><T k="customBody" /></p>
+                <p className="lp-price"><T k="letsTalk" /></p>
               </div>
             </div>
           </div>
@@ -215,14 +218,14 @@ export default function Home() {
         <section className="lp-features">
           <div className="lp-inner">
             <h2 data-reveal>
-              Everything a shop needs.
+              <T k="featTitle1" />
               <br />
-              <span className="lp-dim">Nothing it doesn’t.</span>
+              <span className="lp-dim"><T k="featTitle2" /></span>
             </h2>
             <div className="lp-bento">
               {FEATURES.map((f) => (
-                <div key={f.title} className={`lp-tile-wrap ${f.wide ? "wide" : ""}`} data-reveal>
-                  <FeatureTile {...f} />
+                <div key={f.id} className={`lp-tile-wrap ${f.wide ? "wide" : ""}`} data-reveal>
+                  <FeatureTile wide={f.wide} dark={f.dark} title={<T k={`f${f.id}t` as UiKey} />} body={<T k={`f${f.id}b` as UiKey} />} />
                 </div>
               ))}
             </div>
@@ -232,42 +235,42 @@ export default function Home() {
         <section className="lp-pricing" id="pricing">
           <div className="lp-inner">
             <p className="lp-kicker" data-reveal>
-              Pricing
+              <T k="pricingKicker" />
             </p>
-            <h2 data-reveal>Simple. No surprises.</h2>
+            <h2 data-reveal><T k="pricingTitle" /></h2>
             <div className="lp-plans">
               <div className="lp-plan" data-reveal>
-                <h3>Showcase</h3>
+                <h3><T k="showcase" /></h3>
                 <p className="lp-plan-price">
                   <CountUp to={PRICES.static} />
                 </p>
-                <p className="lp-plan-note">one-time</p>
+                <p className="lp-plan-note"><T k="oneTime" /></p>
                 <ul>
-                  <li>Your own website link</li>
-                  <li>Products, photos, hours and map</li>
-                  <li>Orders on WhatsApp</li>
-                  <li>Unlimited changes by voice</li>
+                  <li><T k="pl1" /></li>
+                  <li><T k="pl2" /></li>
+                  <li><T k="pl3" /></li>
+                  <li><T k="pl4" /></li>
                 </ul>
                 <Link href="/create" className="lp-pill ghost block">
-                  Start with Showcase
+                  <T k="startShowcase" />
                 </Link>
               </div>
               <div className="lp-plan best" data-reveal>
-                <span className="lp-badge">Made for you</span>
-                <h3>Custom website</h3>
-                <p className="lp-plan-price">Let’s talk</p>
-                <p className="lp-plan-note">priced after we understand what you need</p>
+                <span className="lp-badge"><T k="madeForYou" /></span>
+                <h3><T k="customSite" /></h3>
+                <p className="lp-plan-price"><T k="letsTalk" /></p>
+                <p className="lp-plan-note"><T k="customNote" /></p>
                 <ul>
-                  <li>Everything in Showcase</li>
-                  <li>Cart and online orders, if you want them</li>
-                  <li>Your own features and design</li>
-                  <li>We call you first, then quote</li>
+                  <li><T k="cl1" /></li>
+                  <li><T k="cl2" /></li>
+                  <li><T k="cl3" /></li>
+                  <li><T k="cl4" /></li>
                 </ul>
-                <TalkButton className="lp-pill block" label="Talk to us" from="home" />
+                <TalkButton className="lp-pill block" labelKey="talkToUs" from="home" />
               </div>
             </div>
             <p className="lp-fine" data-reveal>
-              Try it free. You only pay when you put your website live. Prices are a proposal and may change.
+              <T k="pricingFine" />
             </p>
           </div>
         </section>
@@ -275,13 +278,13 @@ export default function Home() {
         <section className="lp-final">
           <FinalGlow />
           <div className="lp-inner">
-            <h2 data-reveal>Your shop deserves a website.</h2>
+            <h2 data-reveal><T k="finalTitle" /></h2>
             <p className="lp-sub" data-reveal>
-              It takes less time than making tea.
+              <T k="finalSub" />
             </p>
             <div className="lp-ctas" data-reveal>
               <Link href="/create" className="lp-pill light">
-                Make my website
+                <T k="makeMyWebsite" />
               </Link>
             </div>
           </div>
@@ -290,10 +293,10 @@ export default function Home() {
 
       <footer className="lp-footer">
         <div className="lp-inner lp-footer-row">
-          <span>SiteGenie · Voice-to-Page for small businesses</span>
+          <span><T k="footerTag" /></span>
           <span>
-            <Link href="/privacy">Privacy</Link>
-            <Link href="/terms">Terms</Link>
+            <Link href="/privacy"><T k="privacy" /></Link>
+            <Link href="/terms"><T k="terms" /></Link>
           </span>
         </div>
       </footer>

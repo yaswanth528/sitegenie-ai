@@ -134,7 +134,7 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
               <strong>Custom website</strong>
               <span>Cart, online orders or your own ideas. Tell us what you need and we’ll build it with you.</span>
               <em>Let’s talk</em>
-              <TalkButton className="btn sm" label="Talk to us" from="editor" />
+              <TalkButton className="btn sm" labelKey="talkToUs" from="editor" />
             </div>
           )}
         </div>

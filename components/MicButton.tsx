@@ -1,9 +1,11 @@
 "use client";
+import { useT } from "./I18nProvider";
 import { useSpeech } from "./useSpeech";
 
-export function MicButton({ language, onText, onAudio, label = "Tap and speak" }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void; label?: string }) {
+export function MicButton({ language, onText, onAudio, label }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void; label?: string }) {
+  const t = useT();
   const { supported, state, seconds, error, start, stop } = useSpeech(language, onText, onAudio);
-  if (!supported) return <p className="hint">This browser can't record audio. You can type below instead.</p>;
+  if (!supported) return <p className="hint">{t("micUnsupported")}</p>;
   return (
     <div className="mic-wrap">
       <button
@@ -15,7 +17,7 @@ export function MicButton({ language, onText, onAudio, label = "Tap and speak" }
         aria-pressed={state === "recording"}
       >
         <span className="mic-dot" aria-hidden />
-        {state === "recording" ? `Stop · 0:${String(seconds).padStart(2, "0")}` : state === "transcribing" ? "Listening to your recording…" : label}
+        {state === "recording" ? `${t("micStop")} · 0:${String(seconds).padStart(2, "0")}` : state === "transcribing" ? t("micWriting") : (label ?? t("micTap"))}
       </button>
       {error && <p className="error">{error}</p>}
     </div>

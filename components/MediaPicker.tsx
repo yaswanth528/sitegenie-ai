@@ -1,11 +1,13 @@
 "use client";
 import { useRef, useState } from "react";
+import { useT } from "./I18nProvider";
 import { uploadFile, type Uploaded } from "./upload";
 
 type Pending = { id: string; name: string; pct: number; preview: string | null; error?: string };
 
 // "Browse files" for photos and videos, with previews and per-file progress.
 export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; onChange: (m: Uploaded[]) => void; max?: number }) {
+  const t = useT();
   const input = useRef<HTMLInputElement>(null);
   const [pending, setPending] = useState<Pending[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -50,15 +52,14 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
         }}
       >
         <p>
-          <strong>Add photos or videos</strong> <span className="rec-tag">Recommended</span>
+          <strong>{t("mediaTitle")}</strong> <span className="rec-tag">{t("recommended")}</span>
         </p>
-        <p className="hint">Shop front, products, your work. We’ll place them on your website. Your own photos make the website feel truly yours. No photos? We’ll create pictures for you.</p>
+        <p className="hint">{t("mediaBody")}</p>
         <p className="hint small media-tip">
-          <strong>For the best results:</strong> take photos in daylight, holding the phone sideways for your shop front (it becomes the big banner),
-          and one product per photo on a plain background. Full-size phone photos look sharpest; small or screenshot images are shown smaller, never stretched.
+          <strong>{t("mediaTipBold")}</strong> {t("mediaTip")}
         </p>
         <button type="button" className="btn ghost" onClick={() => input.current?.click()} disabled={full}>
-          Browse files
+          {t("browseFiles")}
         </button>
         <input
           ref={input}
@@ -83,8 +84,8 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={m.url} alt={m.name} />
               )}
-              {m.kind === "video" && <span className="thumb-tag">Video</span>}
-              <button type="button" className="thumb-x" aria-label={`Remove ${m.name}`} onClick={() => onChange(value.filter((_, j) => j !== i))}>
+              {m.kind === "video" && <span className="thumb-tag">{t("video")}</span>}
+              <button type="button" className="thumb-x" aria-label={t("removeFile", { name: m.name })} onClick={() => onChange(value.filter((_, j) => j !== i))}>
                 ×
               </button>
             </li>
@@ -92,10 +93,10 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
           {pending.map((p) => (
             <li key={p.id} className={p.error ? "failed" : "loading"} title={p.error}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              {p.preview ? <img src={p.preview} alt="" /> : <div className="thumb-ph">Video</div>}
-              <span className="thumb-tag">{p.error ? "Failed" : `${Math.round(p.pct)}%`}</span>
+              {p.preview ? <img src={p.preview} alt="" /> : <div className="thumb-ph">{t("video")}</div>}
+              <span className="thumb-tag">{p.error ? t("failed") : `${Math.round(p.pct)}%`}</span>
               {p.error && (
-                <button type="button" className="thumb-x" aria-label="Dismiss" onClick={() => setPending((x) => x.filter((y) => y.id !== p.id))}>
+                <button type="button" className="thumb-x" aria-label={t("dismiss")} onClick={() => setPending((x) => x.filter((y) => y.id !== p.id))}>
                   ×
                 </button>
               )}

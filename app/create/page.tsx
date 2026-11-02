@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { CopyButton } from "@/components/CopyButton";
+import { LanguageSwitcher, useI18n, useT } from "@/components/I18nProvider";
 import { Logo } from "@/components/Logo";
 import { MediaPicker } from "@/components/MediaPicker";
 import ShinyText from "@/components/bits/ShinyText/ShinyText";
@@ -18,6 +19,7 @@ import type { Uploaded } from "@/components/upload";
 import { Rotating } from "@/components/Rotating";
 import { LANGUAGES } from "@/components/useSpeech";
 import { normaliseWhatsapp } from "@/lib/catalogue";
+import { localeForSpeech, nativeName, type Locale, type UiKey } from "@/lib/uitext";
 import { PRICES } from "@/lib/prices";
 import type { Draft, Live } from "@/lib/schema";
 import "./create.css";
@@ -27,16 +29,23 @@ type Question = { question: string; reason: string };
 type Result = { slug: string; editKey: string; whatsapp: string };
 
 // What a good description covers. Prices and timings are ticked off when we hear them.
-const SAY: { label: string; heard: RegExp | null }[] = [
-  { label: "Your shop’s name", heard: /\b(name|called)\b|ಹೆಸರು|नाम|பெயர்|పేరు/i },
-  { label: "What you sell, with prices", heard: /\d{2,}|₹|\brupees?\b|\brs\b|ರೂ|रुपय|ரூ|రూ/i },
-  { label: "Area and timings", heard: /\b(am|pm)\b|\d+\s*(to|-)\s*\d+|timing|ಗಂಟೆ|बजे|மணி|గంట/i },
-  { label: "Delivery or anything special", heard: /deliver|home/i },
+const SAY: { label: UiKey; heard: RegExp | null }[] = [
+  { label: "say1", heard: /\b(name|called)\b|ಹೆಸರು|नाम|பெயர்|పేరు/i },
+  { label: "say2", heard: /\d{2,}|₹|\brupees?\b|\brs\b|ರೂ|रुपय|ரூ|రూ/i },
+  { label: "say3", heard: /\b(am|pm)\b|\d+\s*(to|-)\s*\d+|timing|ಗಂಟೆ|बजे|மணி|గంట/i },
+  { label: "say4", heard: /deliver|home/i },
 ];
 
-const Kicker = ({ text }: { text: string }) => <ShinyText text={text} color="#3a4046" shineColor="#b9c1c6" speed={3} className="cf-kicker" />;
+function Kicker({ k }: { k: UiKey }) {
+  const t = useT();
+  return <ShinyText text={t(k)} color="#3a4046" shineColor="#b9c1c6" speed={3} className="cf-kicker" />;
+}
 
 export default function CreatePage() {
+  const t = useT();
+  const { locale, setLocale } = useI18n();
+  // After the owner picks a speech language, we offer (never force) to switch the page to it too.
+  const [offer, setOffer] = useState<Locale | null>(null);
   const [stage, setStage] = useState<Stage>("speak");
   const [lang, setLang] = useState("English");
   const [transcript, setTranscript] = useState("");
@@ -113,7 +122,7 @@ export default function CreatePage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setErrors([data.error ?? "Couldn't build the website."]);
+        setErrors([data.error ?? t("errBuild")]);
         setStage("speak");
         return;
       }
@@ -121,7 +130,7 @@ export default function CreatePage() {
       setStage("review");
       window.scrollTo({ top: 0 });
     } catch {
-      setErrors(["Network error. Check your connection and try again."]);
+      setErrors([t("errNetwork")]);
       setStage("speak");
     }
   }
@@ -136,7 +145,7 @@ export default function CreatePage() {
       const res = await fetch("/api/pages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(toSave) });
       const data = await res.json();
       if (!res.ok) {
-        setErrors(data.errors ?? ["Couldn't publish."]);
+        setErrors(data.errors ?? [t("errPublish")]);
         setPane("edit"); // show the errors next to the fields that need fixing
         setConfirmWa(false);
         return;
@@ -146,7 +155,7 @@ export default function CreatePage() {
       setStage("pay");
       window.scrollTo({ top: 0 });
     } catch {
-      setErrors(["Network error. Try again."]);
+      setErrors([t("errNetworkShort")]);
     } finally {
       setBusy(false);
     }
@@ -168,32 +177,33 @@ export default function CreatePage() {
         <AmbientBg />
         <header className="review-bar">
           <Logo />
+          <LanguageSwitcher />
           <div className="seg mobile-only" role="tablist">
             <button role="tab" aria-selected={pane === "edit"} className={pane === "edit" ? "on" : ""} onClick={() => setPane("edit")}>
-              Edit
+              {t("tabEdit")}
             </button>
             <button role="tab" aria-selected={pane === "preview"} className={pane === "preview" ? "on" : ""} onClick={() => setPane("preview")}>
-              Preview
+              {t("tabPreview")}
             </button>
           </div>
-          <div className="seg desktop-only" role="radiogroup" aria-label="Preview size">
+          <div className="seg desktop-only" role="radiogroup" aria-label={t("previewSizeAria")}>
             <button role="radio" aria-checked={device === "phone"} className={device === "phone" ? "on" : ""} onClick={() => setDevice("phone")}>
-              Phone
+              {t("devicePhone")}
             </button>
             <button role="radio" aria-checked={device === "desktop"} className={device === "desktop" ? "on" : ""} onClick={() => setDevice("desktop")}>
-              Desktop
+              {t("deviceDesktop")}
             </button>
           </div>
           <button className="cf-pill sm rv-bar-cta desktop-only" onClick={() => setConfirmWa(true)} disabled={busy}>
-            Continue · ₹{PRICES[draft.siteType].toLocaleString("en-IN")}
+            {t("continueFor", { price: `₹${PRICES[draft.siteType].toLocaleString("en-IN")}` })}
           </button>
         </header>
         <div className="review-body">
           <aside className={`review-edit ${pane === "edit" ? "show" : ""}`}>
             <div className="rv-head">
-              <Kicker text="Step 2 of 3" />
-              <h1>Your website is ready.</h1>
-              <p className="hint">This is a preview. Change anything you like, then continue to get your own website.</p>
+              <Kicker k="step2of3" />
+              <h1>{t("readyTitle")}</h1>
+              <p className="hint">{t("readyHint")}</p>
             </div>
             <ReviseMic value={draft} onChange={setDraft} language={lang} onLanguage={setLang} />
             <SiteEditor value={draft} onChange={setDraft} language={lang} showWhatsapp recordings={recordings} />
@@ -201,14 +211,14 @@ export default function CreatePage() {
               {errorBox}
               <div className="row">
                 <button className="cf-pill" onClick={() => setConfirmWa(true)} disabled={busy} aria-busy={busy}>
-                  {busy ? "Saving…" : `Continue · ₹${PRICES[draft.siteType].toLocaleString("en-IN")}`}
+                  {busy ? t("saving") : t("continueFor", { price: `₹${PRICES[draft.siteType].toLocaleString("en-IN")}` })}
                 </button>
                 <button
                   className="cf-pill ghost"
                   disabled={busy}
-                  onClick={() => window.confirm("Go back and build again? Changes you made here will be lost.") && setStage("speak")}
+                  onClick={() => window.confirm(t("startAgainConfirm")) && setStage("speak")}
                 >
-                  Start again
+                  {t("startAgain")}
                 </button>
               </div>
             </div>
@@ -222,7 +232,7 @@ export default function CreatePage() {
               onConfirm={(n) => publish(n)}
             />
           )}
-          <section className={`review-preview ${pane === "preview" ? "show" : ""}`} aria-label="Website preview">
+          <section className={`review-preview ${pane === "preview" ? "show" : ""}`} aria-label={t("tabPreview")}>
             <div className={`device ${device} ${flash ? "flash" : ""}`}>
               <div className="device-scroll">
                 <SiteView site={draft} preview />
@@ -230,24 +240,24 @@ export default function CreatePage() {
             </div>
             <div className="preview-cta mobile-only">
               <button className="cf-pill sm" onClick={() => setConfirmWa(true)} disabled={busy} aria-busy={busy}>
-                {busy ? "Saving…" : `Continue · ₹${PRICES[draft.siteType].toLocaleString("en-IN")}`}
+                {busy ? t("saving") : t("continueFor", { price: `₹${PRICES[draft.siteType].toLocaleString("en-IN")}` })}
               </button>
-              <button className="cf-pill ghost sm" onClick={() => setReviseOpen(true)} aria-label="Change by voice">
-                🎤 Change
+              <button className="cf-pill ghost sm" onClick={() => setReviseOpen(true)} aria-label={t("changeByVoice")}>
+                🎤 {t("changeByVoice")}
               </button>
               <button className="cf-pill ghost sm" onClick={() => setPane("edit")}>
-                Edit
+                {t("tabEdit")}
               </button>
             </div>
           </section>
           {reviseOpen && (
-            <div className="sheet-wrap revise-sheet" role="dialog" aria-modal="true" aria-label="Change your website by voice">
-              <button className="sheet-scrim" onClick={() => setReviseOpen(false)} aria-label="Close" />
+            <div className="sheet-wrap revise-sheet" role="dialog" aria-modal="true" aria-label={t("whatChange")}>
+              <button className="sheet-scrim" onClick={() => setReviseOpen(false)} aria-label={t("close")} />
               <div className="sheet">
                 <div className="row" style={{ justifyContent: "space-between", alignItems: "center", marginTop: 0 }}>
-                  <h2>What should we change?</h2>
+                  <h2>{t("whatChange")}</h2>
                   <button className="btn ghost sm" onClick={() => setReviseOpen(false)}>
-                    See website
+                    {t("seeWebsite")}
                   </button>
                 </div>
                 <ReviseMic value={draft} onChange={setDraft} language={lang} onLanguage={setLang} compact />
@@ -265,11 +275,12 @@ export default function CreatePage() {
       <header className="cf-nav">
         <div className="cf-nav-row">
           <Logo />
-          <ol className="cf-track" aria-label="Steps">
-            {["Speak", "Check", "Go live"].map((label, i) => (
-              <li key={label} className={i < stepNow ? "done" : i === stepNow ? "now" : ""} aria-current={i === stepNow ? "step" : undefined}>
+          <LanguageSwitcher />
+          <ol className="cf-track" aria-label={t("stepsAria")}>
+            {(["stepSpeak", "stepCheck", "stepLive"] as UiKey[]).map((key, i) => (
+              <li key={key} className={i < stepNow ? "done" : i === stepNow ? "now" : ""} aria-current={i === stepNow ? "step" : undefined}>
                 <span>{i < stepNow ? "✓" : i + 1}</span>
-                {label}
+                {t(key)}
               </li>
             ))}
           </ol>
@@ -281,28 +292,51 @@ export default function CreatePage() {
           <div className="cf-speak">
             <div className="cf-col-a">
             <section className="cf-hero">
-              <Kicker text="Step 1 of 3" />
-              <h1>Tell us about your business.</h1>
-              <p className="cf-lead">Speak for 20–60 seconds, in your own language. We’ll turn it into your website.</p>
+              <Kicker k="step1of3" />
+              <h1>{t("speakTitle")}</h1>
+              <p className="cf-lead">{t("speakLead")}</p>
             </section>
 
-            <div className="cf-langs" role="radiogroup" aria-label="Language you’ll speak">
+            <div className="cf-langs" role="radiogroup" aria-label={t("speechLangAria")}>
               {LANGUAGES.map((l) => (
-                <button key={l.name} type="button" role="radio" aria-checked={lang === l.name} className={lang === l.name ? "on" : ""} onClick={() => setLang(l.name)}>
+                <button key={l.name} type="button" role="radio" aria-checked={lang === l.name} className={lang === l.name ? "on" : ""} onClick={() => {
+                    setLang(l.name);
+                    const target = localeForSpeech(l.name);
+                    setOffer(target !== locale ? target : null);
+                  }}>
                   {l.label}
                 </button>
               ))}
             </div>
 
+            {offer && (
+              <div className="cf-offer" role="status">
+                <span>{t("offerSwitch", { lang: nativeName(offer) })}</span>
+                <button
+                  type="button"
+                  className="cf-offer-yes"
+                  onClick={() => {
+                    setLocale(offer);
+                    setOffer(null);
+                  }}
+                >
+                  {t("offerYes")}
+                </button>
+                <button type="button" className="cf-offer-no" onClick={() => setOffer(null)}>
+                  {t("offerNo")}
+                </button>
+              </div>
+            )}
+
             <MicOrb language={lang} onText={onText} onAudio={onAudio} />
 
-            <ul className="cf-say" aria-label="What to talk about">
+            <ul className="cf-say" aria-label={t("sayAria")}>
               {SAY.map((x) => {
                 const done = !!x.heard && x.heard.test(transcript);
                 return (
                   <li key={x.label} className={done ? "done" : ""}>
                     <span aria-hidden="true">{done ? "✓" : "•"}</span>
-                    {x.label}
+                    {t(x.label)}
                   </li>
                 );
               })}
@@ -312,14 +346,14 @@ export default function CreatePage() {
             <div className="cf-col-b">
             <section className="cf-card">
               <div className="cf-card-head">
-                <label htmlFor="transcript">What we heard</label>
-                <span className="cf-muted small">Edit it, or type instead</span>
+                <label htmlFor="transcript">{t("heardLabel")}</label>
+                <span className="cf-muted small">{t("heardHint")}</span>
               </div>
               <textarea
                 id="transcript"
                 value={transcript}
                 onChange={(e) => setTranscript(e.target.value)}
-                placeholder="For example: we sell Mysore silk sarees from 4,500 rupees and cotton sarees for 1,200. We’re in Jayanagar, open 10 am to 9 pm…"
+                placeholder={t("heardPlaceholder")}
               />
             </section>
 
@@ -327,16 +361,16 @@ export default function CreatePage() {
               <MediaPicker value={media} onChange={setMedia} />
               <label className="check">
                 <input type="checkbox" checked={aiImages} onChange={(e) => setAiImages(e.target.checked)} />
-                Find pictures for products I haven’t added a photo for
+                {t("findPictures")}
               </label>
             </section>
 
             {errorBox}
             <div className="cf-cta">
               <button className="cf-pill block" onClick={check} disabled={transcript.trim().length < 5}>
-                Build my website
+                {t("buildMyWebsite")}
               </button>
-              {transcript.trim().length < 5 && <p className="cf-muted small">Speak or type a little about your shop first.</p>}
+              {transcript.trim().length < 5 && <p className="cf-muted small">{t("speakFirst")}</p>}
             </div>
             </div>
           </div>
@@ -345,28 +379,28 @@ export default function CreatePage() {
         {stage === "checking" && (
           <div className="cf-center" aria-live="polite">
             <div className="cf-pulse" aria-hidden="true" />
-            <h1>Checking what you said…</h1>
-            <p className="cf-lead">Making sure we have your products and prices right.</p>
-            <Rotating className="cf-muted" lines={["Reading your products…", "Checking each price…", "Looking for anything missing…", "Almost done…"]} />
+            <h1>{t("checkingTitle")}</h1>
+            <p className="cf-lead">{t("checkingLead")}</p>
+            <Rotating className="cf-muted" lines={[t("checking1"), t("checking2"), t("checking3"), t("checking4")]} />
           </div>
         )}
 
         {stage === "ask" && (
           <>
             <section className="cf-hero">
-              <Kicker text="Almost there" />
-              <h1>A few quick questions.</h1>
-              <p className="cf-lead">So your website is right. Answer by voice or typing, or skip any.</p>
+              <Kicker k="askKicker" />
+              <h1>{t("askTitle")}</h1>
+              <p className="cf-lead">{t("askLead")}</p>
             </section>
             <div className="cf-questions">
               {questions.map((q, i) => (
                 <div key={i} className="cf-card cf-question">
                   <span className="cf-q-num">{i + 1}</span>
                   <p className="cf-q-text">{q.question}</p>
-                  <MicButton language={lang} label="Answer by voice" onAudio={onAudio} onText={(t) => setAnswers((a) => a.map((x, j) => (j === i ? t : x)))} />
+                  <MicButton language={lang} label={t("answerByVoice")} onAudio={onAudio} onText={(t) => setAnswers((a) => a.map((x, j) => (j === i ? t : x)))} />
                   <input
-                    aria-label={`Answer: ${q.question}`}
-                    placeholder="Or type the answer"
+                    aria-label={t("answerAria", { question: q.question })}
+                    placeholder={t("answerPlaceholder")}
                     value={answers[i] ?? ""}
                     onChange={(e) => setAnswers((a) => a.map((x, j) => (j === i ? e.target.value : x)))}
                   />
@@ -375,10 +409,10 @@ export default function CreatePage() {
             </div>
             <div className="cf-cta">
               <button className="cf-pill block" onClick={buildWithAnswers}>
-                Build my website
+                {t("buildMyWebsite")}
               </button>
               <button className="cf-pill ghost block" onClick={() => build(transcript)}>
-                Skip and build
+                {t("skipAndBuild")}
               </button>
             </div>
           </>
@@ -389,9 +423,9 @@ export default function CreatePage() {
         {stage === "pay" && result && draft && (
           <>
             <section className="cf-hero">
-              <Kicker text="Step 3 of 3" />
-              <h1>Get your website.</h1>
-              <p className="cf-lead">It’s saved. After payment it goes live at its own address, and you can keep changing it with your private edit link.</p>
+              <Kicker k="step3of3" />
+              <h1>{t("payTitle")}</h1>
+              <p className="cf-lead">{t("payLead")}</p>
             </section>
             <section className="cf-card">
               <PayPanel
@@ -407,9 +441,9 @@ export default function CreatePage() {
               />
             </section>
             <p className="cf-muted cf-center-text">
-              Want another look first?{" "}
+              {t("anotherLook")}{" "}
               <a href={`/p/${result.slug}`} target="_blank" rel="noreferrer">
-                Open the preview ↗
+                {t("openPreview")}
               </a>
             </p>
           </>
@@ -419,23 +453,23 @@ export default function CreatePage() {
           <>
             <Confetti />
             <section className="cf-hero">
-              <Kicker text="You’re online" />
-              <h1>Your website is live.</h1>
-              <p className="cf-lead">Share it everywhere your customers are.</p>
+              <Kicker k="doneKicker" />
+              <h1>{t("doneTitle")}</h1>
+              <p className="cf-lead">{t("doneLead")}</p>
             </section>
             <section className="cf-card">
-              <label htmlFor="live-url">Your website address</label>
+              <label htmlFor="live-url">{t("websiteAddress")}</label>
               <div className="link-box">
                 <input id="live-url" readOnly value={live?.url ?? ""} onFocus={(e) => e.target.select()} />
                 <CopyButton text={live?.url ?? ""} />
                 <a className="cf-pill sm" href={live?.url} target="_blank" rel="noreferrer">
-                  Open
+                  {t("open")}
                 </a>
               </div>
             </section>
             <section className="cf-card cf-warn">
-              <label htmlFor="edit-url">Save your private edit link</label>
-              <p className="cf-muted small">Use it to change prices by voice, update photos, see orders and put changes live. Anyone with it can change your website, so don’t share it.</p>
+              <label htmlFor="edit-url">{t("saveEditLink")}</label>
+              <p className="cf-muted small">{t("saveEditBody")}</p>
               <div className="link-box">
                 <input id="edit-url" readOnly value={`${origin}/p/${result.slug}/edit#key=${result.editKey}`} onFocus={(e) => e.target.select()} />
                 <CopyButton text={`${origin}/p/${result.slug}/edit#key=${result.editKey}`} />
@@ -443,21 +477,21 @@ export default function CreatePage() {
             </section>
             {live && draft && (
               <section className="cf-card">
-                <h2>Tell your customers</h2>
-                <p className="cf-muted small">Post the status image on WhatsApp and print the poster for your counter.</p>
+                <h2>{t("tellCustomers")}</h2>
+                <p className="cf-muted small">{t("tellBody")}</p>
                 <SharePanel url={live.url} businessName={draft.businessName} headline={draft.headline} themeId={draft.theme.id} accent={draft.theme.accent} />
               </section>
             )}
             <section className="cf-card">
-              <h2>Check that orders reach you</h2>
-              <p className="cf-muted small">Send yourself a test order. If WhatsApp opens your own chat, you’re set.</p>
+              <h2>{t("checkOrders")}</h2>
+              <p className="cf-muted small">{t("checkOrdersBody")}</p>
               <a
                 className="cf-pill wa"
                 href={`https://wa.me/${result.whatsapp}?text=${encodeURIComponent(`Test order from my website (${live?.url ?? ""})`)}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                Send a test order
+                {t("sendTest")}
               </a>
             </section>
           </>
@@ -481,11 +515,12 @@ function WhatsappSheet({
   onCancel: () => void;
   onConfirm: (n: string) => void;
 }) {
+  const t = useT();
   const [value, setValue] = useState(initial);
   const ok = normaliseWhatsapp(value) !== null;
   return (
     <div className="sheet-wrap" role="dialog" aria-modal="true" aria-labelledby="wa-sheet-title">
-      <button className="sheet-scrim" onClick={onCancel} aria-label="Close" />
+      <button className="sheet-scrim" onClick={onCancel} aria-label={t("close")} />
       <form
         className="sheet"
         onSubmit={(e) => {
@@ -493,18 +528,18 @@ function WhatsappSheet({
           if (ok) onConfirm(value);
         }}
       >
-        <h2 id="wa-sheet-title">Where should orders come?</h2>
-        <p className="hint">Customers’ orders and messages will come to this WhatsApp number. It’s shown on your website.</p>
-        <label htmlFor="wa-sheet">Your WhatsApp number</label>
+        <h2 id="wa-sheet-title">{t("waTitle")}</h2>
+        <p className="hint">{t("waHint")}</p>
+        <label htmlFor="wa-sheet">{t("waLabel")}</label>
         <input id="wa-sheet" inputMode="tel" autoComplete="tel" placeholder="98765 43210" value={value} onChange={(e) => setValue(e.target.value)} autoFocus />
-        {value && !ok && <p className="error">Enter a 10-digit mobile number.</p>}
+        {value && !ok && <p className="error">{t("waInvalid")}</p>}
         {error && <p className="error">{error}</p>}
         <div className="row">
           <button className="btn" disabled={!ok || busy} aria-busy={busy}>
-            {busy ? "Saving…" : "Confirm and continue"}
+            {busy ? t("saving") : t("waConfirm")}
           </button>
           <button type="button" className="btn ghost" onClick={onCancel} disabled={busy}>
-            Back
+            {t("back")}
           </button>
         </div>
       </form>

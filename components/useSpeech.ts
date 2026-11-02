@@ -2,6 +2,7 @@
 // Records the owner's voice with MediaRecorder and sends it to /api/transcribe,
 // where Gemini turns it into text. Owners can always type instead.
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useT } from "./I18nProvider";
 
 export type RecorderState = "idle" | "recording" | "transcribing";
 const MAX_SECONDS = 60;
@@ -12,6 +13,7 @@ function pickMimeType(): string | undefined {
 }
 
 export function useSpeech(language: string, onText: (text: string) => void, onAudio?: (recording: Blob) => void) {
+  const t = useT();
   const [supported, setSupported] = useState(false);
   const [state, setState] = useState<RecorderState>("idle");
   const [seconds, setSeconds] = useState(0);
@@ -38,15 +40,15 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
         form.append("language", language);
         const res = await fetch("/api/transcribe", { method: "POST", body: form });
         const data = await res.json();
-        if (!res.ok) setError(data.error ?? "Couldn't understand the recording.");
+        if (!res.ok) setError(t("micNotUnderstood"));
         else onText(data.transcript);
       } catch {
-        setError("Network error while sending the recording. Try again.");
+        setError(t("micNetwork"));
       } finally {
         setState("idle");
       }
     },
-    [language, onText],
+    [language, onText, t],
   );
 
   const stop = useCallback(() => {
@@ -67,7 +69,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
-      setError("Microphone permission was blocked. Allow it in your browser settings, or type below.");
+      setError(t("micBlocked"));
       return;
     }
     const mimeType = pickMimeType();
@@ -105,7 +107,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
         return s + 1;
       });
     }, 1000);
-  }, [stop, upload, onAudio]);
+  }, [stop, upload, onAudio, t]);
 
   return { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds: MAX_SECONDS };
 }
