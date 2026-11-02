@@ -309,7 +309,7 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 .cf-nav-row .lang-switch { margin-left: auto; }
 .cf-nav-row .cf-track { margin-left: 0; }
 .review-bar .lang-switch { margin-left: auto; }
-@media (max-width: 520px) { .cf-nav-row { gap: 8px; } .lang-switch { padding: 0 8px; } }
+@media (max-width: 520px) { .cf-nav-row { gap: 8px; } }
 
 /* Offer to match the page language to the chosen speech language (never switches on its own). */
 .cf-offer { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 10px; padding: 10px 14px; border-radius: 16px; background: #e4f2f2; border: 1px solid rgba(13, 43, 54, 0.22); color: #0d2b36; font-size: 0.92rem; font-weight: 600; text-align: center; }
@@ -375,3 +375,30 @@ html[lang="or"] :is(body, button, input, select, textarea) { font-family: var(--
 @media (max-width: 400px) { .cf-nav-row .lang-switch-name { font-size: 0.82rem; } .cf-nav-row { gap: 6px; } .cf .cf-track li span { width: 18px; height: 18px; font-size: 0.7rem; } .cf-nav-row .lang-switch { padding-right: 20px; } .cf-nav-row .lang-switch::after { right: 8px; } }
 @media (max-width: 520px) { .cf .cf-track li.now, .cf .cf-track li.done, .cf .cf-track li { padding: 0; min-width: 0; } }
 @media (max-width: 520px) { .cf .cf-track li, .cf .cf-track li.now, .cf .cf-track li.done { padding: 0 !important; } }
+
+/* ---- Alignment fixes from the payment walkthrough (2026-11-02) ---- */
+/* Review header on phones: logo icon only plus a compact chooser, so the Edit/Preview tabs never get clipped. */
+@media (max-width: 520px) {
+  .rv .review-bar { gap: 6px; }
+  .rv .review-bar .logo-name { display: none; }
+  .rv .review-bar .lang-switch svg { display: none; }
+  .rv .review-bar .lang-switch { padding-left: 12px; }
+  .rv .review-bar .seg button { padding: 6px 12px; }
+}
+/* Status labels hug their text instead of stretching across a column. */
+.pill { align-self: flex-start; width: fit-content; }
+/* The price is the main number on the payment card: full ink colour. */
+.pay-amount { color: #0d2b36; }
+/* Link rows on phones: the address on its own line, buttons together underneath, on every card. */
+@media (max-width: 520px) { .cf .link-box input { flex: 1 1 100%; } }
+/* Share previews: both cards end at the same line, so the Download buttons line up. */
+.share-grid figure { grid-template-rows: 1fr auto; }
+.share-canvas { align-self: start; }
+@media (max-width: 380px) {
+  .rv .review-bar { padding-left: 10px; padding-right: 10px; gap: 4px; }
+  .rv .review-bar .seg button { padding: 6px 8px; font-size: 0.76rem; }
+  .rv .review-bar .lang-switch-name { font-size: 0.78rem; }
+  .rv .review-bar .lang-switch { padding: 0 20px 0 9px; }
+  .rv .review-bar .lang-switch::after { right: 7px; }
+}
+@media (max-width: 520px) { .cf .link-box input { flex: 1 1 100% !important; } }

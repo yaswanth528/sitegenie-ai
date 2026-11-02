@@ -56,6 +56,9 @@ export async function POST(req: Request, { params }: Ctx) {
   } catch (err) {
     console.error(err);
     // Paid but not deployed yet: the owner can retry "Update live website" from the edit screen.
-    return NextResponse.json({ error: (err as Error).message, paid: charge, payment: paid.payment }, { status: 502 });
+    return NextResponse.json(
+      { error: "We couldn't put your website live just now. Your payment is saved, so you won't be charged again. Please try again in a minute.", paid: charge, payment: paid.payment },
+      { status: 502 },
+    );
   }
 }

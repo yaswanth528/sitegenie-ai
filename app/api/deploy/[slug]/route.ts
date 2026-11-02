@@ -19,6 +19,6 @@ export async function POST(req: Request, { params }: Ctx) {
     return NextResponse.json({ live: next.live });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 502 });
+    return NextResponse.json({ error: "We couldn't put your website live just now. Please try again in a minute." }, { status: 502 });
   }
 }

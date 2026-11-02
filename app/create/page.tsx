@@ -38,7 +38,7 @@ const SAY: { label: UiKey; heard: RegExp | null }[] = [
 
 function Kicker({ k }: { k: UiKey }) {
   const t = useT();
-  return <ShinyText text={t(k)} color="#3a4046" shineColor="#b9c1c6" speed={3} className="cf-kicker" />;
+  return <ShinyText text={t(k)} color="#3a4046" shineColor="#5f6b72" speed={3} className="cf-kicker" />;
 }
 
 export default function CreatePage() {
