@@ -50,9 +50,9 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
         }}
       >
         <p>
-          <strong>Add photos or videos</strong> <span className="hint">(optional)</span>
+          <strong>Add photos or videos</strong> <span className="rec-tag">Recommended</span>
         </p>
-        <p className="hint">Shop front, products, your work. We’ll place them on your website. No photos? We’ll create pictures for you.</p>
+        <p className="hint">Shop front, products, your work. We’ll place them on your website. Your own photos make the website feel truly yours. No photos? We’ll create pictures for you.</p>
         <p className="hint small media-tip">
           <strong>For the best results:</strong> take photos in daylight, holding the phone sideways for your shop front (it becomes the big banner),
           and one product per photo on a plain background. Full-size phone photos look sharpest; small or screenshot images are shown smaller, never stretched.

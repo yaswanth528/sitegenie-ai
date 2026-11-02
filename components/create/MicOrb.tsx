@@ -7,7 +7,7 @@ import { useSpeech } from "../useSpeech";
 const BARS = 32;
 
 export function MicOrb({ language, onText, onAudio }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void }) {
-  const { supported, state, seconds, error, start, stop, stream, maxSeconds } = useSpeech(language, onText, onAudio);
+  const { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds } = useSpeech(language, onText, onAudio);
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
   const orb = useRef<HTMLButtonElement>(null);
 
@@ -69,6 +69,11 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
           </svg>
         )}
       </button>
+      {recording && (
+        <button type="button" className="cf-mic-x" onClick={cancel} aria-label="Cancel recording and discard it" title="Cancel and discard">
+          ×
+        </button>
+      )}
       <div className="cf-wave" aria-hidden="true">
         {Array.from({ length: BARS }, (_, i) => (
           <span key={i} ref={(el) => void (bars.current[i] = el)} />

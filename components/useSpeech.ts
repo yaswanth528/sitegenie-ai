@@ -19,6 +19,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
   const [stream, setStream] = useState<MediaStream | null>(null); // while recording, for a live waveform
   const recorder = useRef<MediaRecorder | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const discard = useRef(false); // the owner tapped the small cross: throw the recording away
 
   useEffect(() => {
     setSupported(typeof window !== "undefined" && !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== "undefined");
@@ -53,6 +54,13 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
     if (recorder.current?.state === "recording") recorder.current.stop();
   }, []);
 
+  const cancel = useCallback(() => {
+    discard.current = true;
+    if (timer.current) clearInterval(timer.current);
+    if (recorder.current?.state === "recording") recorder.current.stop();
+    setSeconds(0);
+  }, []);
+
   const start = useCallback(async () => {
     setError(null);
     let stream: MediaStream;
@@ -70,6 +78,11 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
       stream.getTracks().forEach((t) => t.stop());
       setStream(null);
       const blob = new Blob(chunks, { type: rec.mimeType || mimeType || "audio/webm" });
+      if (discard.current) {
+        discard.current = false;
+        setState("idle");
+        return;
+      }
       if (blob.size > 0) {
         onAudio?.(blob); // kept in the browser so the owner can replay it during review
         upload(blob);
@@ -77,6 +90,11 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
       else setState("idle");
     };
     recorder.current = rec;
+    discard.current = false;
+    // If the mic is cut off in the middle (call, unplugged headset, browser error), keep
+    // what was already said instead of losing it.
+    rec.onerror = () => stop();
+    stream.getAudioTracks().forEach((t) => (t.onended = () => stop()));
     rec.start();
     setStream(stream);
     setSeconds(0);
@@ -89,7 +107,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
     }, 1000);
   }, [stop, upload, onAudio]);
 
-  return { supported, state, seconds, error, start, stop, stream, maxSeconds: MAX_SECONDS };
+  return { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds: MAX_SECONDS };
 }
 
 // The language name is passed to Gemini as a hint; the code is for read-back speech.

@@ -304,3 +304,9 @@
 .is-idle .cf-orb { animation: cf-idle 3.2s ease-in-out infinite; }
 @keyframes cf-idle { 50% { box-shadow: 0 24px 60px -12px rgba(18, 163, 163, 0.8), 0 0 0 18px rgba(70, 78, 86, 0.1), inset 0 -6px 18px rgba(0, 0, 0, 0.15); } }
 @media (prefers-reduced-motion: reduce) { .cf-main > *, .cf-speak > * > *, .is-idle .cf-orb { animation: none; } }
+
+/* Small cross while recording: cancel and discard. Kept small so it is not hit by accident. */
+.cf-mic { position: relative; }
+.cf-mic-x { position: absolute; top: 0; right: calc(50% - 82px); width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 1px solid var(--cf-muted); background: transparent; color: var(--cf-muted); font-size: 16px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.cf-mic-x:hover { color: #b3261e; border-color: #b3261e; }
+.rec-tag { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: rgba(18, 163, 163, 0.14); color: #0b7a7a; font-size: 0.75rem; font-weight: 700; vertical-align: middle; }

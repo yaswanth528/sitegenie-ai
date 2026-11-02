@@ -258,3 +258,14 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
   .lg-head > :nth-child(n + 3) { animation-delay: 0.12s; }
 }
 @keyframes lg-rise { from { opacity: 0; translate: 0 18px; } }
+
+/* ---- Polish pass (2026-11-02) ---- */
+/* Bottom "Build my website" bar: a solid, blurred base so the button never floats over text. */
+.cf .cf-cta { background: linear-gradient(rgba(246, 250, 250, 0), rgba(246, 250, 250, 0.96) 38%); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+/* Chips and cards: clearer text and edges against the pale background. */
+.cf .cf-say li { color: #0d2b36; box-shadow: inset 0 0 0 1px rgba(13, 43, 54, 0.22); }
+.cf .cf-say li.done { color: #0b6e58; box-shadow: inset 0 0 0 1px rgba(11, 110, 88, 0.35); }
+.cf .cf-mic-label { color: #3a5560; }
+/* Bigger logo so the brand reads at a glance. */
+.logo .logo-icon { height: 28px; }
+.logo .logo-name { height: 19px; }
