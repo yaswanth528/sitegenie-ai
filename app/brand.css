@@ -269,3 +269,7 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 /* Bigger logo so the brand reads at a glance. */
 .logo .logo-icon { height: 28px; }
 .logo .logo-name { height: 19px; }
+/* Top bar: nearly solid so page text never shows behind the logo. */
+.cf-nav { background: color-mix(in srgb, var(--cf-bg) 95%, transparent); }
+/* Disabled main button: opaque (muted teal) instead of see-through, so text never shows through it. */
+.cf .cf-pill:disabled { opacity: 1; background: #8fb9bd; color: #fff; box-shadow: none; }
