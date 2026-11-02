@@ -96,8 +96,8 @@ async function transcribeWith(model: string, base64: string, mimeType: string, l
       {
         type: "text",
         text: `Transcribe this recording. A small shop owner in India is either describing their business (products, prices, area, hours) or asking for a change to their website (for example "change the price of kaju katli to 950" or "make the colours green").
-First work out which language is actually spoken: usually Kannada, Hindi, Tamil, Telugu, English, or a mix. The owner picked ${language}, but treat that only as a hint; if they speak another language, transcribe that language.
-Write exactly what was said, in the native script of the language spoken (Kannada in ಕನ್ನಡ script, Hindi in देवनागरी, Tamil in தமிழ், Telugu in తెలుగు); English words stay in English. Write every number and price as digits (e.g. 950). Output only the transcript, no commentary. If there is no speech, output nothing.`,
+First work out which language is actually spoken: usually Kannada, Hindi, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, English, or a mix. The owner picked ${language}, but treat that only as a hint; if they speak another language, transcribe that language.
+Write exactly what was said, in the native script of the language spoken (Kannada in ಕನ್ನಡ script, Hindi in देवनागरी, Tamil in தமிழ், Telugu in తెలుగు, Malayalam in മലയാളം, Marathi in देवनागरी, Bengali in বাংলা, Gujarati in ગુજરાતી, Punjabi in ਗੁਰਮੁਖੀ, Odia in ଓଡ଼ିଆ); English words stay in English. Write every number and price as digits (e.g. 950). Output only the transcript, no commentary. If there is no speech, output nothing.`,
       },
       { type: "audio", data: base64, mime_type: mimeType },
     ],
@@ -129,7 +129,7 @@ ${transcript}`);
 // ---------- Planning the website ----------
 
 const PLAN_RULES = `You are planning a small business's website from what the owner said (and any photos they uploaded).
-The transcript may mix languages (Kannada, Hindi, English, Hinglish) and may contain speech-to-text errors.
+The transcript may mix languages (Kannada, Hindi, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, English, Hinglish) and may contain speech-to-text errors.
 
 Facts — be strict:
 - Only include products, prices, units, areas, hours and selling points the owner actually said. Never invent them.

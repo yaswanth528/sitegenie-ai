@@ -1,12 +1,18 @@
 // Interface-language lookup for SiteGenie's own screens. Missing keys fall back to English.
 // (Generated customer websites use lib/i18n.ts instead, and are never touched by this.)
 import { en, type UiDict, type UiKey } from "./en";
+import { bn } from "./bn";
+import { gu } from "./gu";
 import { hi } from "./hi";
 import { kn } from "./kn";
+import { ml } from "./ml";
+import { mr } from "./mr";
+import { or } from "./or";
+import { pa } from "./pa";
 import { ta } from "./ta";
 import { te } from "./te";
 
-export type Locale = "en" | "kn" | "hi" | "ta" | "te";
+export type Locale = "en" | "kn" | "hi" | "ta" | "te" | "ml" | "mr" | "bn" | "gu" | "pa" | "or";
 export type { UiKey };
 
 // `speech` is the name the speech chooser uses (components/useSpeech LANGUAGES), so the two
@@ -17,9 +23,15 @@ export const UI_LOCALES: { code: Locale; label: string; speech: string }[] = [
   { code: "hi", label: "हिन्दी", speech: "Hindi" },
   { code: "ta", label: "தமிழ்", speech: "Tamil" },
   { code: "te", label: "తెలుగు", speech: "Telugu" },
+  { code: "ml", label: "മലയാളം", speech: "Malayalam" },
+  { code: "mr", label: "मराठी", speech: "Marathi" },
+  { code: "bn", label: "বাংলা", speech: "Bengali" },
+  { code: "gu", label: "ગુજરાતી", speech: "Gujarati" },
+  { code: "pa", label: "ਪੰਜਾਬੀ", speech: "Punjabi" },
+  { code: "or", label: "ଓଡ଼ିଆ", speech: "Odia" },
 ];
 
-const DICTS: Record<Locale, UiDict> = { en, kn, hi, ta, te };
+const DICTS: Record<Locale, UiDict> = { en, kn, hi, ta, te, ml, mr, bn, gu, pa, or };
 
 export const isLocale = (v: unknown): v is Locale => UI_LOCALES.some((l) => l.code === v);
 export const localeForSpeech = (speech: string): Locale => UI_LOCALES.find((l) => l.speech === speech)?.code ?? "en";

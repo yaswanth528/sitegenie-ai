@@ -10,6 +10,10 @@ const LABELS: Record<string, string> = {
   Telugu: "తెలుగు",
   Malayalam: "മലയാളം",
   Marathi: "मराठी",
+  Bengali: "বাংলা",
+  Gujarati: "ગુજરાતી",
+  Punjabi: "ਪੰਜਾਬੀ",
+  Odia: "ଓଡ଼ିଆ",
   English: "English",
 };
 

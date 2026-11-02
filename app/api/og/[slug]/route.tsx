@@ -33,6 +33,10 @@ const SCRIPTS: [RegExp, string][] = [
   [/[஀-௿]/, "Noto Sans Tamil"],
   [/[ఀ-౿]/, "Noto Sans Telugu"],
   [/[ഀ-ൿ]/, "Noto Sans Malayalam"],
+  [/[\u0980-\u09FF]/, "Noto Sans Bengali"],
+  [/[\u0A80-\u0AFF]/, "Noto Sans Gujarati"],
+  [/[\u0A00-\u0A7F]/, "Noto Sans Gurmukhi"],
+  [/[\u0B00-\u0B7F]/, "Noto Sans Oriya"],
 ];
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {

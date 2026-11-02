@@ -24,7 +24,7 @@ export type Theme = {
   palettes: [Palette, Palette, Palette];
 };
 
-const indic = 'var(--f-kannada), var(--f-devanagari), system-ui, sans-serif';
+const indic = 'var(--f-kannada), var(--f-devanagari), var(--f-tamil), var(--f-telugu), var(--f-malayalam), var(--f-bengali), var(--f-gujarati), var(--f-gurmukhi), var(--f-oriya), system-ui, sans-serif';
 
 export const THEMES: Record<ThemeId, Theme> = {
   boutique: {

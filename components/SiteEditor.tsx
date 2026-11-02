@@ -553,6 +553,10 @@ const SECOND_LANGUAGES = [
   { name: "Telugu", label: "తెలుగు" },
   { name: "Malayalam", label: "മലയാളം" },
   { name: "Marathi", label: "मराठी" },
+  { name: "Bengali", label: "বাংলা" },
+  { name: "Gujarati", label: "ગુજરાતી" },
+  { name: "Punjabi", label: "ਪੰਜਾਬੀ" },
+  { name: "Odia", label: "ଓଡ଼ିଆ" },
   { name: "English", label: "English" },
 ];
 

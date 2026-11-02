@@ -53,6 +53,9 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
         <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" strokeWidth="1.8" />
       </svg>
+      <span className="lang-switch-name" aria-hidden="true">
+        {UI_LOCALES.find((l) => l.code === locale)?.label}
+      </span>
       <select aria-label={t("langAria")} value={locale} onChange={(e) => isLocale(e.target.value) && setLocale(e.target.value)}>
         {UI_LOCALES.map((l) => (
           <option key={l.code} value={l.code}>

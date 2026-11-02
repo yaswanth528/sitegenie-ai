@@ -22,7 +22,7 @@ const FONTS: Record<string, string> = {
   craft: "family=Playfair+Display:wght@600;700&family=Mulish:wght@400;600;700;800",
   bazaar: "family=Archivo:wght@400;600;800",
 };
-const FONT_VARS = `:root{--f-cormorant:"Cormorant Garamond";--f-jost:"Jost";--f-fraunces:"Fraunces";--f-nunito:"Nunito Sans";--f-baloo:"Baloo 2";--f-hind:"Hind";--f-sora:"Sora";--f-manrope:"Manrope";--f-playfair:"Playfair Display";--f-mulish:"Mulish";--f-archivo:"Archivo";--f-kannada:"Noto Sans Kannada";--f-devanagari:"Noto Sans Devanagari";--f-tamil:"Noto Sans Tamil";--f-telugu:"Noto Sans Telugu";--f-malayalam:"Noto Sans Malayalam"}`;
+const FONT_VARS = `:root{--f-cormorant:"Cormorant Garamond";--f-jost:"Jost";--f-fraunces:"Fraunces";--f-nunito:"Nunito Sans";--f-baloo:"Baloo 2";--f-hind:"Hind";--f-sora:"Sora";--f-manrope:"Manrope";--f-playfair:"Playfair Display";--f-mulish:"Mulish";--f-archivo:"Archivo";--f-kannada:"Noto Sans Kannada";--f-devanagari:"Noto Sans Devanagari";--f-tamil:"Noto Sans Tamil";--f-telugu:"Noto Sans Telugu";--f-malayalam:"Noto Sans Malayalam";--f-bengali:"Noto Sans Bengali";--f-gujarati:"Noto Sans Gujarati";--f-gurmukhi:"Noto Sans Gurmukhi";--f-oriya:"Noto Sans Oriya"}`;
 
 const WA_SVG = `<svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 2.6a9.4 9.4 0 0 0-8.1 14.1L2.6 21.4l4.8-1.3A9.4 9.4 0 1 0 12 2.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 7.9c.2-.5.5-.5.8-.5h.6c.2 0 .4 0 .6.5l.8 1.8c.1.2.1.4 0 .6l-.6.8c-.1.2-.1.4 0 .5a7 7 0 0 0 2.9 2.8c.2.1.4.1.5 0l.8-.8c.2-.2.4-.2.6-.1l1.8.8c.2.1.4.2.4.4v.6c0 .5-.3 1-.9 1.3-.6.3-1.7.5-3.6-.3a10.4 10.4 0 0 1-4.6-4.3C8.4 10.4 8.6 8.7 9 7.9z" fill="currentColor"/></svg>`;
 
@@ -235,6 +235,10 @@ export async function renderStandalone(site: Site, appOrigin: string): Promise<s
     [/[\u0B80-\u0BFF]/, "Noto+Sans+Tamil"],
     [/[\u0C00-\u0C7F]/, "Noto+Sans+Telugu"],
     [/[\u0D00-\u0D7F]/, "Noto+Sans+Malayalam"],
+    [/[\u0980-\u09FF]/, "Noto+Sans+Bengali"],
+    [/[\u0A80-\u0AFF]/, "Noto+Sans+Gujarati"],
+    [/[\u0A00-\u0A7F]/, "Noto+Sans+Gurmukhi"],
+    [/[\u0B00-\u0B7F]/, "Noto+Sans+Oriya"],
   ];
   for (const [re, fam] of scripts) if (re.test(allText)) fonts.push(`family=${fam}:wght@400;600;700`);
   const ogImage = ogImageUrl(appOrigin, site);

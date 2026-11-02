@@ -119,4 +119,10 @@ export const LANGUAGES = [
   { name: "Hindi", code: "hi-IN", label: "हिन्दी Hindi" },
   { name: "Tamil", code: "ta-IN", label: "தமிழ் Tamil" },
   { name: "Telugu", code: "te-IN", label: "తెలుగు Telugu" },
+  { name: "Malayalam", code: "ml-IN", label: "മലയാളം Malayalam" },
+  { name: "Marathi", code: "mr-IN", label: "मराठी Marathi" },
+  { name: "Bengali", code: "bn-IN", label: "বাংলা Bengali" },
+  { name: "Gujarati", code: "gu-IN", label: "ગુજરાતી Gujarati" },
+  { name: "Punjabi", code: "pa-IN", label: "ਪੰਜਾਬੀ Punjabi" },
+  { name: "Odia", code: "or-IN", label: "ଓଡ଼ିଆ Odia" },
 ];
