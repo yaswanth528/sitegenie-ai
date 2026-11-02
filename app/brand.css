@@ -287,3 +287,10 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 @keyframes rv-hint { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
 @media (min-width: 980px) { .rv .review-preview.show::before { display: none; } }
 @media (prefers-reduced-motion: reduce) { .rv .review-preview.show::before { animation-duration: 0.01s; animation-delay: 6s; } }
+
+/* "Let's talk" form: opened from inside dark cards, so set its own readable colours. */
+.talk-sheet { color: #0d2b36; text-align: left; display: grid; gap: 8px; }
+.talk-sheet :is(h2, label, p) { color: #0d2b36; text-shadow: none; }
+.talk-sheet .hint { color: #4a6470; }
+.talk-sheet .error { color: #b3261e; }
+.talk-sheet textarea { font: inherit; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(13, 43, 54, 0.25); background: #fff; color: #0d2b36; }
