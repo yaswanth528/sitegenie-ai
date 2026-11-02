@@ -273,3 +273,17 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 .cf-nav { background: color-mix(in srgb, var(--cf-bg) 95%, transparent); }
 /* Disabled main button: opaque (muted teal) instead of see-through, so text never shows through it. */
 .cf .cf-pill:disabled { opacity: 1; background: #8fb9bd; color: #fff; box-shadow: none; }
+
+/* ---- Review screen polish (phones) ---- */
+@media (max-width: 979px) {
+  /* The voice-change card was filling the first screen; keep it short so the fields are in view. */
+  .rv .review-edit .revise:not(.compact) { padding: 14px 16px; gap: 6px; }
+  .rv .review-edit .revise:not(.compact) h2 { font-size: 1.1rem; }
+  .rv .review-edit .revise:not(.compact) > .hint { display: none; }
+  .rv .review-edit .revise:not(.compact) textarea { min-height: 44px; height: 44px; }
+}
+/* A short "scroll" hint above the bottom bar on the phone preview, gone after a few seconds. */
+.rv .review-preview.show::before { content: "↕ Scroll to see your whole website"; position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); z-index: 30; padding: 7px 14px; border-radius: 99px; background: rgba(8, 57, 77, 0.92); color: #fff; font-size: 0.82rem; font-weight: 600; pointer-events: none; white-space: nowrap; animation: rv-hint 6s ease forwards; }
+@keyframes rv-hint { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@media (min-width: 980px) { .rv .review-preview.show::before { display: none; } }
+@media (prefers-reduced-motion: reduce) { .rv .review-preview.show::before { animation-duration: 0.01s; animation-delay: 6s; } }
