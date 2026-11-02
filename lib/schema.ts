@@ -217,7 +217,9 @@ export type Payment = {
   plan: "static" | "dynamic";
   amount: number; // rupees paid in total
   mode: "test" | "live";
-  reference: string;
+  gateway?: "razorpay" | "simulated";
+  reference: string; // the gateway payment id (or TEST-… when simulated)
+  paymentIds?: string[]; // every gateway payment id applied to this site (a payment is never applied twice)
   paidAt: string;
   paidUntil?: string | null; // dynamic plan: online orders paid up to this date (yearly)
 };

@@ -30,6 +30,10 @@ export default function PrivacyPage() {
           SiteGenie.
         </li>
         <li>
+          <strong>Paying SiteGenie:</strong> your payment is processed by Razorpay (UPI, cards or netbanking). Razorpay collects your payment
+          details; SiteGenie does not see or store your card or UPI details. We keep only the payment reference, the amount and the date.
+        </li>
+        <li>
           <strong>Your recording</strong> is sent to Google Gemini to turn speech into text and is not kept by SiteGenie after that.
           Recordings you replay on the review screen stay on your own phone.
         </li>

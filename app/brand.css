@@ -388,7 +388,7 @@ html[lang="or"] :is(body, button, input, select, textarea) { font-family: var(--
 /* Status labels hug their text instead of stretching across a column. */
 .pill { align-self: flex-start; width: fit-content; }
 /* The price is the main number on the payment card: full ink colour. */
-.pay-amount { color: #0d2b36; }
+.pay .pay-amount, .cf .pay-amount { color: #0d2b36; }
 /* Link rows on phones: the address on its own line, buttons together underneath, on every card. */
 @media (max-width: 520px) { .cf .link-box input { flex: 1 1 100%; } }
 /* Share previews: both cards end at the same line, so the Download buttons line up. */

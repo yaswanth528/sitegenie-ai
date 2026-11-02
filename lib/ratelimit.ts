@@ -63,6 +63,8 @@ export const LIMITS = {
   publish: { limit: 20, windowSec: 3600 },
   order: { limit: 10, windowSec: 600 },
   enquiry: { limit: 5, windowSec: 3600 },
+  payOrder: { limit: 12, windowSec: 3600 },
+  payWebhook: { limit: 300, windowSec: 60 },
   adminLogin: { limit: 10, windowSec: 900 },
   loginCode: { limit: 10, windowSec: 3600 },
   loginVerify: { limit: 20, windowSec: 3600 },
