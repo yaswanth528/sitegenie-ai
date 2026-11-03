@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { canEdit } from "@/lib/owner";
 import { chargeFor, paymentProvider } from "@/lib/publish";
 import { limit } from "@/lib/ratelimit";
-import { createOrder, razorpayKeyId, razorpayMode } from "@/lib/razorpay";
+import { createOrder, RazorpayError, razorpayKeyId, razorpayMode } from "@/lib/razorpay";
 import { getSite } from "@/lib/store";
 
 type Ctx = { params: Promise<{ slug: string }> };
@@ -44,7 +44,14 @@ export async function POST(req: Request, { params }: Ctx) {
       prefill: { contact: digits ? `+${digits}` : undefined, email: site.ownerEmail ?? undefined },
     });
   } catch (err) {
-    console.error("Razorpay order failed:", (err as Error).message);
-    return NextResponse.json({ error: "We couldn't start the payment. Please try again in a minute." }, { status: 502 });
+    const message = (err as Error).message;
+    if (err instanceof RangeError) return NextResponse.json({ error: "That amount can't be paid online." }, { status: 400 });
+    if (err instanceof RazorpayError && err.status === 401) {
+      // Our own keys were refused: a setup problem for you, not something a customer can fix.
+      console.error("Razorpay rejected our keys (401). Check RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET:", message);
+      return NextResponse.json({ error: "Online payment isn't set up correctly yet. Please contact SiteGenie." }, { status: 401 });
+    }
+    console.error("Razorpay order failed:", message);
+    return NextResponse.json({ error: "We couldn't start the payment. Please try again in a minute." }, { status: 500 });
   }
 }

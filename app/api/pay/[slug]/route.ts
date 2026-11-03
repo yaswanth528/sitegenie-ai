@@ -31,7 +31,7 @@ export async function POST(req: Request, { params }: Ctx) {
       const orderId = text(body.razorpay?.order_id);
       const paymentId = text(body.razorpay?.payment_id);
       const signature = text(body.razorpay?.signature);
-      if (!orderId || !paymentId || !signature) return NextResponse.json({ error: "Payment is needed first.", due: charge }, { status: 402 });
+      if (!orderId || !paymentId || !signature) return NextResponse.json({ error: "Payment details are missing. Please try paying again.", due: charge }, { status: 400 });
       if (!checkoutSignatureOk(orderId, paymentId, signature)) return NextResponse.json({ error: "We couldn't verify that payment." }, { status: 400 });
       try {
         await confirmPayment({ orderId, paymentId, slug, expectedRupees: charge });

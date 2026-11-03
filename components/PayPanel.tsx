@@ -57,7 +57,7 @@ function loadCheckout(): Promise<void> {
 }
 
 // Opens the checkout window. Resolves with the payment details, or null if the customer closed it.
-function openCheckout(order: Order): Promise<CheckoutResult | null> {
+function openCheckout(order: Order, onFailed: (message: string) => void): Promise<CheckoutResult | null> {
   return new Promise((resolve, reject) => {
     if (!window.Razorpay) return reject(new Error("checkout script"));
     const rzp = new window.Razorpay({
@@ -72,6 +72,8 @@ function openCheckout(order: Order): Promise<CheckoutResult | null> {
       handler: (r: CheckoutResult) => resolve(r),
       modal: { ondismiss: () => resolve(null) },
     });
+    // A failed attempt (card declined, bank error): Razorpay keeps the window open for another try; we also say why.
+    rzp.on("payment.failed", (r) => onFailed((r as { error?: { description?: string } })?.error?.description || "The payment didn't go through. Please try again."));
     rzp.open();
   });
 }
@@ -95,6 +97,7 @@ export function PayPanel({ slug, editKey, siteType, due, upgrade, onLive }: Prop
   // Tells the server to finish: verify the payment (when there is one), then put the website live.
   async function finish(razorpay?: CheckoutResult) {
     setPhase("verifying");
+    setError(null);
     const res = await fetch(`/api/pay/${slug}`, {
       method: "POST",
       headers: { "x-edit-key": editKey, "Content-Type": "application/json" },
@@ -124,7 +127,7 @@ export function PayPanel({ slug, editKey, siteType, due, upgrade, onLive }: Prop
       if (order.provider !== "razorpay") return await finish(); // practice payment (no Razorpay keys on the server)
       await loadCheckout();
       setPhase("paying");
-      const result = await openCheckout(order as Order);
+      const result = await openCheckout(order as Order, setError);
       if (!result) return; // the customer closed the window: nothing to do
       await finish(result);
     } catch {

@@ -19,6 +19,15 @@ export const razorpayMode = (): "test" | "live" => (razorpayKeyId().startsWith("
 
 const auth = () => `Basic ${Buffer.from(`${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`).toString("base64")}`;
 
+// Razorpay answered with an error. `status` is Razorpay's HTTP status (401 = our keys were rejected).
+export class RazorpayError extends Error {
+  status: number;
+  constructor(status: number, detail: string) {
+    super(`Razorpay ${status}: ${detail}`);
+    this.status = status;
+  }
+}
+
 async function rz<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${base()}${path}`, {
     ...init,
@@ -27,15 +36,20 @@ async function rz<T>(path: string, init: RequestInit = {}): Promise<T> {
     signal: AbortSignal.timeout(15_000),
   });
   const body = (await res.json().catch(() => ({}))) as T & { error?: { description?: string; code?: string } };
-  if (!res.ok) throw new Error(`Razorpay ${res.status}: ${body.error?.description ?? body.error?.code ?? "request failed"}`);
+  if (!res.ok) throw new RazorpayError(res.status, body.error?.description ?? body.error?.code ?? "request failed");
   return body;
 }
 
 export type RzOrder = { id: string; amount: number; amount_paid?: number; currency: string; status: string; notes?: Record<string, string> };
 export type RzPayment = { id: string; order_id: string | null; amount: number; currency: string; status: string; captured?: boolean };
 
-export const createOrder = (amountRupees: number, receipt: string, notes: Record<string, string>) =>
-  rz<RzOrder>("/v1/orders", { method: "POST", body: JSON.stringify({ amount: Math.round(amountRupees * 100), currency: "INR", receipt: receipt.slice(0, 40), notes }) });
+export const MIN_PAISE = 100; // Razorpay's minimum order is 100 paise (₹1)
+
+export function createOrder(amountRupees: number, receipt: string, notes: Record<string, string>) {
+  const amount = Math.round(amountRupees * 100);
+  if (!Number.isFinite(amount) || amount < MIN_PAISE) throw new RangeError(`Order amount must be at least ${MIN_PAISE} paise`);
+  return rz<RzOrder>("/v1/orders", { method: "POST", body: JSON.stringify({ amount, currency: "INR", receipt: receipt.slice(0, 40), notes }) });
+}
 
 export const getOrder = (id: string) => rz<RzOrder>(`/v1/orders/${encodeURIComponent(id)}`);
 export const getPayment = (id: string) => rz<RzPayment>(`/v1/payments/${encodeURIComponent(id)}`);
