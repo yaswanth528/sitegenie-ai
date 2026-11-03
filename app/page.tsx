@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CountUp, FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
+import { FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
 import { Reveal } from "@/components/landing/Reveal";
 import { TalkButton } from "@/components/CustomEnquiry";
 import { LanguageSwitcher, T } from "@/components/I18nProvider";
@@ -241,9 +241,7 @@ export default function Home() {
             <div className="lp-plans">
               <div className="lp-plan" data-reveal>
                 <h3><T k="showcase" /></h3>
-                <p className="lp-plan-price">
-                  <CountUp to={PRICES.static} />
-                </p>
+                <p className="lp-plan-price">{rs(PRICES.static)}</p>
                 <p className="lp-plan-note"><T k="oneTime" /></p>
                 <ul>
                   <li><T k="pl1" /></li>
