@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { INDUSTRY_IDS } from "./references";
 
 export const THEME_IDS = ["boutique", "kitchen", "fresh", "studio", "craft", "bazaar"] as const;
 export type ThemeId = (typeof THEME_IDS)[number];
@@ -27,10 +28,12 @@ export const SitePlanSchema = z.object({
   businessName: z.string().nullable(),
   language: z.string().describe("Language(s) the owner spoke, e.g. 'Kannada', 'Hinglish'"),
   category: z.string().describe("Short business type in English, e.g. 'women's ethnic wear', 'bakery', 'kirana store'"),
+  industry: z.enum([...INDUSTRY_IDS, "other"]).describe("The closest industry in the reference list, or 'other' if none fits. Used to borrow the look of good sites in that industry."),
   themeId: z.enum(THEME_IDS).describe(
     "boutique: clothing, sarees, beauty, salons. kitchen: food, bakery, sweets, restaurants, tiffin. fresh: grocery, kirana, fruits, vegetables, dairy, organic. studio: services, tuition, repairs, consultants, fitness. craft: handmade, jewellery, pottery, home decor, gifts. bazaar: electronics, mobiles, hardware, general stores, anything else.",
   ),
   accent: z.number().describe("0, 1 or 2: which of the theme's three colour options suits this business best"),
+  layout: z.enum(LAYOUTS).describe("grid: photo tiles. list: photo beside details. lookbook: big photos. menu: names and prices, no photos. Follow the reference industry unless the owner's products suit another."),
   heroStyle: z.enum(["full", "split"]).describe("full: big photo behind the headline. split: headline beside the photo"),
   headline: z.string().describe("Short, warm homepage headline (max 8 words) in the owner's language or English"),
   subheadline: z.string().describe("One sentence saying what they sell and to whom, using only what they said"),

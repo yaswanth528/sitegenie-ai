@@ -2,6 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { mediaForModel } from "./media";
 import { UI_EN } from "./i18n";
+import { referencePrompt } from "./references";
 import {
   GapCheckSchema,
   PatchSchema,
@@ -128,7 +129,9 @@ ${transcript}`);
 
 // ---------- Planning the website ----------
 
-const PLAN_RULES = `You are planning a small business's website from what the owner said (and any photos they uploaded).
+const PLAN_RULES = `${referencePrompt()}
+
+You are planning a small business's website from what the owner said (and any photos they uploaded).
 The transcript may mix languages (Kannada, Hindi, Tamil, Telugu, Malayalam, Marathi, Bengali, Gujarati, Punjabi, Odia, English, Hinglish) and may contain speech-to-text errors.
 
 Facts — be strict:
@@ -141,7 +144,7 @@ Writing — be warm and short:
 - Write copy in the language the owner spoke, except use English if they spoke English or mixed with lots of English.
 
 Design:
-- Pick the theme that fits the business type, the colour option that suits it, and a hero style.
+- Pick the theme that fits the business type, the colour option that suits it, the product layout, and a hero style. Start from the reference industry's suggestions (see the reference list above).
 - Uploaded photos are numbered from 0 in the order given. Match photos to the products they show, pick the best banner, and put good leftovers in the gallery. Never use one photo twice.
 - For any product without a matching photo, write imagePrompt: a realistic product photo of exactly that item (Indian context), soft natural light, clean simple background, no text, no brand names, logos or packaging labels, no people's faces.
 - heroImagePrompt: a wide, inviting photo that captures this kind of shop in India: its own kind of goods, unbranded. No text, no logos, no brand names, no branded packaging, and never another company's products.
