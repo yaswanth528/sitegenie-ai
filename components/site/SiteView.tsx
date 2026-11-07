@@ -158,8 +158,8 @@ export function SiteView({ site, preview }: Props) {
   );
   const count = lines.reduce((s, l) => s + l.qty, 0);
   const total = orderTotal(lines);
-  const vars = themeVars(site.theme.id, site.theme.accent, site.theme.industry) as CSSProperties;
-  const look = lookAttrs(lookFor(site.theme.industry, site.theme.id));
+  const vars = themeVars(site.theme.id, site.theme.accent, site.theme.industry, site.theme.variant) as CSSProperties;
+  const look = lookAttrs(lookFor(site.theme.industry, site.theme.id, site.theme.variant));
   const mosaic = heroMosaic(site);
   const spot = spotlightIndex(site.items);
   const heroType = !site.hero && !mosaic.length;

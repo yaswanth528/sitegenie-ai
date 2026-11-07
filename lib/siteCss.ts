@@ -631,6 +631,23 @@ export const SITE_CSS = `
 .site[data-cards="tinted"].is-store #products, .site[data-cards="tinted"].is-store [id="alt-products"] { background: var(--s-bg); }
 .site[data-cards="tinted"] .s-grid:not(.s-grid-text) .s-card-body { padding-inline: clamp(14px, 2.4cqi, 20px); }
 
+/* Heading ornament and top bar */
+.site[data-orn="none"] .s-section-head::before { content: none; }
+.site[data-orn="wide"] .s-section-head::before { width: 96px; height: 2px; }
+.site[data-header="solid"] .s-header { background: var(--s-bg); backdrop-filter: none; -webkit-backdrop-filter: none; border-bottom-color: var(--s-line); }
+.site[data-header="tint"] .s-header { background: color-mix(in srgb, var(--s-soft) 92%, transparent); border-bottom-color: transparent; }
+
+/* Banner photo side, and centred text on a full-width banner */
+@container site (min-width: 860px) {
+  .site[data-side="left"] .s-hero-split.has-media .s-hero-inner { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); }
+  .site[data-side="left"] .s-hero-split.has-media .s-hero-media { order: -1; }
+}
+.site[data-hero="centre"] .s-hero-full { align-items: center; text-align: center; }
+.site[data-hero="centre"] .s-hero-full .s-hero-copy { margin-inline: auto; justify-items: center; }
+.site[data-hero="centre"] .s-hero-full :is(.s-hero-cta, .s-perks, .s-trust) { justify-content: center; }
+.site[data-hero="centre"] .s-hero-full .s-hero-inner { padding-block: 56px; }
+.site[data-hero="centre"] .s-hero-full::after { background: linear-gradient(180deg, rgba(0,0,0,.38) 0%, rgba(0,0,0,.62) 100%); }
+
 /* Banner band */
 .site[data-band="soft"] .s-hero:not(.s-hero-full) { background: var(--s-soft); border-radius: 0 0 var(--s-r-lg) var(--s-r-lg); padding-bottom: clamp(32px, 6cqi, 72px); }
 .site[data-band="soft"] .s-hero-type::before { background: radial-gradient(40% 50% at 15% 30%, color-mix(in srgb, var(--s-accent) 18%, transparent), transparent 70%), var(--s-soft); }

@@ -4,6 +4,7 @@ import { planSite, type UploadedMedia } from "@/lib/ai";
 import { findPicture } from "@/lib/images";
 import { normaliseWhatsapp } from "@/lib/catalogue";
 import { designFor } from "@/lib/references";
+import { seedFrom } from "@/lib/look";
 import { LAYOUTS, THEME_IDS, type Draft, type Media } from "@/lib/schema";
 
 export const maxDuration = 120; // planning + parallel image generation
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
     }
     await Promise.all(jobs);
 
-    const design = designFor(plan, plan.items.some((it) => it.mediaIndex != null));
+    const design = designFor(plan, plan.items.some((it) => it.mediaIndex != null), seedFrom(`${plan.businessName ?? ""} ${plan.category}`));
 
     const draft: Draft = {
       businessName: plan.businessName ?? "",
@@ -106,6 +107,7 @@ export async function POST(req: Request) {
         accent: [0, 1, 2].includes(design.accent) ? design.accent : 0,
         layout: LAYOUTS.includes(design.layout) ? design.layout : "grid",
         industry: design.industry,
+        variant: design.variant,
         // The owner's own banner photo is shown whole beside the headline; a full-screen banner would crop it.
         heroStyle: hero?.kind === "image" ? "split" : design.heroStyle,
       },

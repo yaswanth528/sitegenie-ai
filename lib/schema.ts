@@ -176,7 +176,7 @@ export type SiteContent = {
   category: string;
   language: string;
   siteType: "static" | "dynamic";
-  theme: { id: ThemeId; accent: number; heroStyle: "full" | "split"; layout?: Layout; industry?: string };
+  theme: { id: ThemeId; accent: number; heroStyle: "full" | "split"; layout?: Layout; industry?: string; variant?: number };
   headline: string;
   subheadline: string;
   about: string | null;

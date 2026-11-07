@@ -1,5 +1,6 @@
 import { SCAN } from "./referenceScan";
 import { THEMES } from "./themes";
+import { FAMILY_THEMES, LAYOUT_ALTS, familyOf, rngFrom } from "./look";
 import type { Layout, ThemeId } from "./schema";
 
 // SiteGenie's memory of what good websites look like, by kind of business.
@@ -204,22 +205,47 @@ ${lines.join("\n")}`;
 }
 
 // The design a new site gets. The planner names the industry; its theme, colour, layout and banner are
-// applied here in code, unless the owner asked for a particular style (then the planner's own choices
-// stand) or uploaded product photos that a text-only menu would hide.
-export type Design = { id: ThemeId; accent: number; layout: Layout; heroStyle: "full" | "split"; industry?: string };
+// the starting point, and the site's own seed (from its name) varies them within what suits the industry's
+// look family, so two bakeries are not the same site. If the owner asked for a particular style, the
+// planner's own choices stand. A text-only menu is never used when the owner uploaded product photos.
+export type Design = { id: ThemeId; accent: number; layout: Layout; heroStyle: "full" | "split"; industry?: string; variant?: number };
+
+const isDark = (hex: string) => {
+  const n = parseInt(hex.slice(1), 16);
+  return 0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255) < 90;
+};
 
 export function designFor(
   plan: { industry: string; ownerStyleRequest: boolean; themeId: ThemeId; accent: number; layout: Layout; heroStyle: "full" | "split" },
   ownPhotos: boolean,
+  seed?: number,
 ): Design {
   const ind = industryById(plan.industry);
   const use = !!ind && !plan.ownerStyleRequest;
-  const layout = use ? ind.layout : plan.layout;
+  let id: ThemeId = use ? ind.theme : plan.themeId;
+  let accent: number = use ? ind.accent : plan.accent;
+  let layout: Layout = use ? ind.layout : plan.layout;
+  let heroStyle: "full" | "split" = use ? ind.hero : plan.heroStyle;
+  if (use && typeof seed === "number") {
+    const rand = rngFrom(seed ^ 0x9e3779b9);
+    const fam = familyOf(ind.id, ind.theme);
+    // The industry's own choice stays the most likely; the rest are other good fits for the same family.
+    if (rand() < 0.4) {
+      const alts = FAMILY_THEMES[fam].filter((t) => t !== ind.theme);
+      id = alts[Math.floor(rand() * alts.length)] ?? ind.theme;
+    }
+    const light = ([0, 1, 2] as const).filter((i) => !isDark(THEMES[id].palettes[i].bg));
+    accent = id === ind.theme && rand() < 0.5 ? ind.accent : light[Math.floor(rand() * light.length)] ?? ind.accent;
+    const layouts = LAYOUT_ALTS[ind.layout];
+    layout = rand() < 0.6 ? ind.layout : layouts[Math.floor(rand() * layouts.length)];
+    if (rand() < 0.35) heroStyle = heroStyle === "full" ? "split" : "full";
+  }
   return {
-    id: use ? ind.theme : plan.themeId,
-    accent: use ? ind.accent : plan.accent,
+    id,
+    accent,
     layout: layout === "menu" && ownPhotos ? "grid" : layout,
-    heroStyle: use ? ind.hero : plan.heroStyle,
+    heroStyle,
     industry: ind ? ind.id : undefined,
+    variant: typeof seed === "number" ? seed : undefined,
   };
 }
