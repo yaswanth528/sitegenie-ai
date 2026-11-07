@@ -686,6 +686,86 @@ export const SITE_CSS = `
 .site[data-order="story"] > .s-steps-wrap { order: 8; }
 .site[data-order="story"] > .s-footer { order: 99; }
 
+/* ---------- Page frames: each industry family gets its own page skeleton ---------- */
+/* Editorial (fashion, jewellery, watches): centred masthead, magazine headings with a rule */
+.site[data-frame="editorial"] .s-header-row { position: relative; min-height: 72px; }
+.site[data-frame="editorial"] .s-brand { font-size: 1.15rem; text-transform: uppercase; letter-spacing: .14em; }
+.site[data-frame="editorial"] .s-nav { margin-inline: 0 auto; }
+@container site (min-width: 820px) {
+  .site[data-frame="editorial"] .s-brand { position: absolute; left: 50%; transform: translateX(-50%); max-width: 40%; font-size: clamp(1.3rem, 2.4cqi, 1.9rem); letter-spacing: .16em; }
+}
+.site[data-frame="editorial"] .s-section-head { text-align: left; justify-items: start; margin-inline: 0; max-width: none; padding-bottom: 18px; border-bottom: 1px solid var(--s-ink); }
+.site[data-frame="editorial"] .s-section-head::before { content: none; }
+.site[data-frame="editorial"] .s-contact-grid { text-align: center; justify-items: center; }
+.site[data-frame="editorial"] .s-contact-card { background: transparent; border: 1px solid var(--s-ink); border-radius: 0; justify-items: center; text-align: center; }
+.site[data-frame="editorial"] .s-footer { background: transparent; border-top: 1px solid var(--s-ink); }
+.site[data-frame="editorial"] .s-footer-row { justify-content: center; text-align: center; }
+
+/* Warm (bakery, tea, flowers, beauty): floating pill header, banner as a rounded card */
+.site[data-frame="warm"] .s-header { margin: 12px clamp(10px, 2.5cqi, 28px) 0; border-radius: 999px; border: 1px solid var(--s-line); background: color-mix(in srgb, var(--s-surface) 88%, transparent); box-shadow: 0 10px 30px -18px rgba(0,0,0,.35); top: 10px; }
+.site[data-frame="warm"] .s-header-row { padding-inline: 8px; }
+.site[data-frame="warm"] .s-hero { margin: 12px clamp(10px, 2.5cqi, 28px) 0; border-radius: 32px; }
+.site[data-frame="warm"] .s-hero:not(.s-hero-full) { background: var(--s-soft); }
+.site[data-frame="warm"] .s-contact { background: var(--s-soft); margin: 0 clamp(10px, 2.5cqi, 28px); border-radius: 32px; }
+.site[data-frame="warm"] .s-footer { background: transparent; }
+
+/* Poster (restaurants, snacks, sport, vehicles): dark top bar, dark contact section */
+.site[data-frame="poster"] .s-header { background: var(--s-accent); border-bottom: 0; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--s-accent-ink); }
+.site[data-frame="poster"] .s-brand { color: var(--s-accent-ink); text-transform: uppercase; letter-spacing: .04em; }
+.site[data-frame="poster"] .s-nav a { color: var(--s-accent-ink); opacity: .85; text-transform: uppercase; letter-spacing: .1em; font-size: .78rem; font-weight: 700; }
+.site[data-frame="poster"] .s-nav a:hover { opacity: 1; }
+.site[data-frame="poster"] .s-lang { color: var(--s-accent-ink); }
+.site[data-frame="poster"] .s-header .s-btn { background: var(--s-accent-ink); color: var(--s-accent); }
+.site[data-frame="poster"] .s-highlights { background: var(--s-accent); color: var(--s-accent-ink); border: 0; }
+.site[data-frame="poster"] .s-highlights-row p::before { background: var(--s-accent-ink); }
+.site[data-frame="poster"] .s-section-head { text-align: left; justify-items: start; margin-inline: 0; max-width: none; }
+.site[data-frame="poster"] .s-section-head::before { width: 72px; height: 8px; border-radius: 0; }
+.site[data-frame="poster"] .s-contact { background: var(--s-ink); color: var(--s-bg); }
+.site[data-frame="poster"] .s-contact :is(.s-contact-list span, .s-muted) { color: color-mix(in srgb, var(--s-bg) 65%, transparent); }
+.site[data-frame="poster"] .s-contact .s-contact-card { background: var(--s-surface); color: var(--s-ink); }
+.site[data-frame="poster"] .s-contact .s-contact-card .s-muted { color: var(--s-muted); }
+.site[data-frame="poster"] .s-footer { background: var(--s-ink); color: color-mix(in srgb, var(--s-bg) 65%, transparent); }
+
+/* Corporate (manufacturing, clinics, services): accent rule on top, ruled headings, accent contact band */
+.site[data-frame="corporate"] .s-header { border-top: 5px solid var(--s-accent); background: var(--s-surface); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.site[data-frame="corporate"] .s-nav a { text-transform: uppercase; letter-spacing: .08em; font-size: .76rem; font-weight: 700; }
+.site[data-frame="corporate"] .s-brand { font-size: 1.15rem; }
+.site[data-frame="corporate"] .s-hero { border-bottom: 1px solid var(--s-line); }
+.site[data-frame="corporate"] .s-section-head { text-align: left; justify-items: start; margin-inline: 0; max-width: none; padding-left: 18px; border-left: 5px solid var(--s-accent); }
+.site[data-frame="corporate"] .s-section-head::before { content: none; }
+.site[data-frame="corporate"] .s-contact { background: var(--s-accent); color: var(--s-accent-ink); }
+.site[data-frame="corporate"] .s-contact :is(.s-contact-list span, .s-muted) { color: color-mix(in srgb, var(--s-accent-ink) 72%, transparent); }
+.site[data-frame="corporate"] .s-contact .s-link { color: var(--s-accent-ink); text-decoration: underline; }
+.site[data-frame="corporate"] .s-contact .s-contact-card { background: var(--s-surface); color: var(--s-ink); border-radius: 4px; }
+.site[data-frame="corporate"] .s-contact .s-contact-card .s-muted { color: var(--s-muted); }
+.site[data-frame="corporate"] .s-contact .s-contact-card .s-link { color: var(--s-accent); }
+.site[data-frame="corporate"] .s-footer { background: var(--s-ink); color: color-mix(in srgb, var(--s-bg) 60%, transparent); }
+
+/* Story (handicrafts, interiors, furniture, travel): split headings, alternating tinted sections */
+.site[data-frame="story"] .s-section-head { text-align: left; justify-items: start; margin-inline: 0; }
+.site[data-frame="story"] .s-section-head::before { content: none; }
+@container site (min-width: 860px) {
+  .site[data-frame="story"] .s-section-head { grid-template-columns: 1fr 1fr; align-items: end; max-width: none; gap: 8px 48px; }
+  .site[data-frame="story"] .s-section-head p { justify-self: end; }
+}
+.site[data-frame="story"] #products, .site[data-frame="story"] [id="alt-products"] { background: var(--s-soft); }
+.site[data-frame="story"] .s-about { background: var(--s-bg); }
+.site[data-frame="story"] .s-brand { font-style: italic; font-size: 1.45rem; }
+.site[data-frame="story"] .s-contact { background: color-mix(in srgb, var(--s-accent) 14%, var(--s-bg)); }
+.site[data-frame="story"] .s-footer { background: transparent; text-align: center; }
+.site[data-frame="story"] .s-footer-row { justify-content: center; }
+
+/* Clean (electronics, eyewear, bags, education): pill nav, products on a grey panel, white contact card */
+.site[data-frame="clean"] .s-nav { background: var(--s-soft); padding: 5px; border-radius: 999px; gap: 2px; }
+.site[data-frame="clean"] .s-nav a { padding: 7px 16px; border-radius: 999px; color: var(--s-ink); font-weight: 600; }
+.site[data-frame="clean"] .s-nav a:hover { background: var(--s-surface); }
+.site[data-frame="clean"] .s-header { background: color-mix(in srgb, var(--s-bg) 92%, transparent); border-bottom: 0; }
+.site[data-frame="clean"] #products, .site[data-frame="clean"] [id="alt-products"] { background: var(--s-soft); margin: 0 clamp(10px, 2.5cqi, 28px); border-radius: 36px; }
+.site[data-frame="clean"] .s-card { background: var(--s-surface); }
+.site[data-frame="clean"] .s-section-head h2 { letter-spacing: -0.03em; }
+.site[data-frame="clean"] .s-contact-card { background: var(--s-surface); border: 1px solid var(--s-line); }
+.site[data-frame="clean"] .s-footer { background: transparent; }
+
 @media (prefers-reduced-motion: reduce) {
   .site *, .site *::before { transition: none !important; }
   .s-card:hover, .s-btn:hover { transform: none; }

@@ -13,6 +13,7 @@ import type { Layout, ThemeId } from "./schema";
 // Fonts are never changed here (only the weights loaded in lib/fonts.ts exist).
 
 export type Look = {
+  frame: LookId; // the page skeleton: header, section headings, contact band (see "Page frames" in lib/siteCss.ts)
   corners: "square" | "soft" | "round";
   button: "pill" | "soft" | "square"; // square = small corners, uppercase, spaced
   head: "plain" | "poster" | "quiet"; // poster = huge uppercase headlines, quiet = lighter, wider, smaller
@@ -27,7 +28,7 @@ export type Look = {
   side: "right" | "left"; // which side the banner photo sits on in the side-by-side banner
 };
 
-type Options = { [K in keyof Look]: readonly Look[K][] };
+type Options = { [K in Exclude<keyof Look, "frame">]: readonly Look[K][] };
 
 export const FAMILIES = {
   // Fashion, sarees, watches, perfumes: square, quiet, airy, tall banner, big photos do the selling.
@@ -139,7 +140,7 @@ const AXES = ["corners", "button", "head", "cards", "density", "hero", "heroSize
 export function lookFor(industry: string | null | undefined, theme: ThemeId, seed?: number | null): Look {
   const fam = FAMILIES[familyOf(industry, theme)] as Options;
   const rand = typeof seed === "number" ? rngFrom(seed ^ 0x5bd1e995) : null;
-  const out: Record<string, string> = {};
+  const out: Record<string, string> = { frame: familyOf(industry, theme) };
   for (const axis of AXES) {
     const list = fam[axis] as readonly string[];
     out[axis] = rand ? list[Math.floor(rand() * list.length)] : list[0];
@@ -156,6 +157,7 @@ export function lookVars(look: Look): Record<string, string> {
 
 export function lookAttrs(look: Look): Record<string, string> {
   return {
+    "data-frame": look.frame,
     "data-btn": look.button,
     "data-head": look.head,
     "data-cards": look.cards,
