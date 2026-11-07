@@ -689,7 +689,7 @@ export const SITE_CSS = `
 /* ---------- Page frames: each industry family gets its own page skeleton ---------- */
 /* Editorial (fashion, jewellery, watches): centred masthead, magazine headings with a rule */
 .site[data-frame="editorial"] .s-header-row { position: relative; min-height: 72px; }
-.site[data-frame="editorial"] .s-brand { font-size: 1.15rem; text-transform: uppercase; letter-spacing: .14em; }
+.site[data-frame="editorial"] .s-brand { font-size: clamp(.8rem, 3.8cqi, 1.15rem); text-transform: uppercase; letter-spacing: .1em; }
 .site[data-frame="editorial"] .s-nav { margin-inline: 0 auto; }
 @container site (min-width: 820px) {
   .site[data-frame="editorial"] .s-brand { position: absolute; left: 50%; transform: translateX(-50%); max-width: 40%; font-size: clamp(1.3rem, 2.4cqi, 1.9rem); letter-spacing: .16em; }
@@ -711,7 +711,7 @@ export const SITE_CSS = `
 
 /* Poster (restaurants, snacks, sport, vehicles): dark top bar, dark contact section */
 .site[data-frame="poster"] .s-header { background: var(--s-accent); border-bottom: 0; backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--s-accent-ink); }
-.site[data-frame="poster"] .s-brand { color: var(--s-accent-ink); text-transform: uppercase; letter-spacing: .04em; }
+.site[data-frame="poster"] .s-brand { color: var(--s-accent-ink); text-transform: uppercase; letter-spacing: .02em; font-size: clamp(.78rem, 4.2cqi, 1.25rem); }
 .site[data-frame="poster"] .s-nav a { color: var(--s-accent-ink); opacity: .85; text-transform: uppercase; letter-spacing: .1em; font-size: .78rem; font-weight: 700; }
 .site[data-frame="poster"] .s-nav a:hover { opacity: 1; }
 .site[data-frame="poster"] .s-lang { color: var(--s-accent-ink); }
