@@ -3,6 +3,7 @@ import { limit } from "@/lib/ratelimit";
 import { planSite, type UploadedMedia } from "@/lib/ai";
 import { findPicture } from "@/lib/images";
 import { normaliseWhatsapp } from "@/lib/catalogue";
+import { designFor } from "@/lib/references";
 import { LAYOUTS, THEME_IDS, type Draft, type Media } from "@/lib/schema";
 
 export const maxDuration = 120; // planning + parallel image generation
@@ -93,17 +94,20 @@ export async function POST(req: Request) {
     }
     await Promise.all(jobs);
 
+    const design = designFor(plan, plan.items.some((it) => it.mediaIndex != null));
+
     const draft: Draft = {
       businessName: plan.businessName ?? "",
       category: plan.category,
       language: plan.language,
       siteType: "static",
       theme: {
-        id: THEME_IDS.includes(plan.themeId) ? plan.themeId : "bazaar",
-        accent: [0, 1, 2].includes(plan.accent) ? plan.accent : 0,
-        layout: LAYOUTS.includes(plan.layout) ? plan.layout : "grid",
+        id: THEME_IDS.includes(design.id) ? design.id : "bazaar",
+        accent: [0, 1, 2].includes(design.accent) ? design.accent : 0,
+        layout: LAYOUTS.includes(design.layout) ? design.layout : "grid",
+        industry: design.industry,
         // The owner's own banner photo is shown whole beside the headline; a full-screen banner would crop it.
-        heroStyle: hero?.kind === "image" ? "split" : plan.heroStyle,
+        heroStyle: hero?.kind === "image" ? "split" : design.heroStyle,
       },
       headline: plan.headline,
       subheadline: plan.subheadline,

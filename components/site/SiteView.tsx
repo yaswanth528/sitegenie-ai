@@ -11,6 +11,7 @@ import type { Media, Order, SiteContent } from "@/lib/schema";
 import { aboutFacts, askText, badgeLabel, cssUrl, FEST_ICON, festGreeting, heroMosaic, howSteps, isFramed, quoteOnly, SEARCH_MIN, spotlightIndex, storeBar, storePerks, coverFits, fullHeroHeight } from "@/lib/siteBits";
 import { SITE_CSS } from "@/lib/siteCss";
 import { themeVars } from "@/lib/themes";
+import { lookAttrs, lookFor } from "@/lib/look";
 
 type Props = {
   site: SiteContent & { whatsapp: string; slug?: string };
@@ -157,7 +158,8 @@ export function SiteView({ site, preview }: Props) {
   );
   const count = lines.reduce((s, l) => s + l.qty, 0);
   const total = orderTotal(lines);
-  const vars = themeVars(site.theme.id, site.theme.accent) as CSSProperties;
+  const vars = themeVars(site.theme.id, site.theme.accent, site.theme.industry) as CSSProperties;
+  const look = lookAttrs(lookFor(site.theme.industry, site.theme.id));
   const mosaic = heroMosaic(site);
   const spot = spotlightIndex(site.items);
   const heroType = !site.hero && !mosaic.length;
@@ -221,7 +223,7 @@ export function SiteView({ site, preview }: Props) {
   return (
     <div className="site-box">
       <style dangerouslySetInnerHTML={{ __html: SITE_CSS }} />
-      <div className={`site theme-${site.theme.id} ${dynamic ? "is-store" : "is-showcase"} ${preview ? "is-preview" : ""}`} style={vars}>
+      <div className={`site theme-${site.theme.id} ${dynamic ? "is-store" : "is-showcase"} ${preview ? "is-preview" : ""}`} style={vars} {...look}>
         {dynamic && <div className="s-storebar">{storeBar(site, u)}</div>}
         {site.festival && (
           <div className={`s-festive s-fest-${site.festival.id}`}>

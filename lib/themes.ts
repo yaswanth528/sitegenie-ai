@@ -1,4 +1,5 @@
 import type { ThemeId } from "./schema";
+import { lookFor, lookVars } from "./look";
 
 type Palette = {
   name: string;
@@ -119,7 +120,7 @@ export const THEMES: Record<ThemeId, Theme> = {
   },
 };
 
-export function themeVars(id: ThemeId, accent: number): Record<string, string> {
+export function themeVars(id: ThemeId, accent: number, industry?: string | null): Record<string, string> {
   const t = THEMES[id] ?? THEMES.bazaar;
   const p = t.palettes[accent] ?? t.palettes[0];
   return {
@@ -137,5 +138,6 @@ export function themeVars(id: ThemeId, accent: number): Record<string, string> {
     "--s-heading-case": t.headingCase,
     "--s-tracking": t.tracking,
     "--s-radius": t.radius,
+    ...lookVars(lookFor(industry, id)),
   };
 }

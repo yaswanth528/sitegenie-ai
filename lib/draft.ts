@@ -98,6 +98,7 @@ export function cleanContent(input: unknown): { content: SiteContent; errors: st
       accent: [0, 1, 2].includes(d.theme?.accent as number) ? d.theme!.accent : 0,
       heroStyle: d.theme?.heroStyle === "split" ? "split" : "full",
       layout: LAYOUTS.includes(d.theme?.layout as never) ? d.theme!.layout : "grid",
+      industry: typeof d.theme?.industry === "string" && /^[a-z-]{2,30}$/.test(d.theme.industry) ? d.theme.industry : undefined,
     },
     headline: str(d.headline, 120),
     subheadline: str(d.subheadline, 300),

@@ -11,6 +11,7 @@ import { jsonLd, ogImageUrl } from "./seo";
 import { aboutFacts, askText, badgeLabel, cssUrl, FEST_ICON, festGreeting, heroMosaic, howSteps, isFramed, quoteOnly, SEARCH_MIN, spotlightIndex, storeBar, storePerks, coverFits, fullHeroHeight } from "./siteBits";
 import { SITE_CSS } from "./siteCss";
 import { themeVars } from "./themes";
+import { lookAttrs, lookFor } from "./look";
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -111,7 +112,7 @@ function body(site: Site, L: LocalText, appOrigin: string, lang: "base" | "alt",
   const facts = aboutFacts(L, site.items.length, categories.length, u);
   const spot = spotlightHtml(site, L, ask);
   const showSearch = site.items.length >= (dynamic ? 5 : SEARCH_MIN);
-  return `<div class="site theme-${site.theme.id} ${dynamic ? "is-store" : "is-showcase"}" data-lang="${lang}" style="${esc(Object.entries(themeVars(site.theme.id, site.theme.accent)).map(([k, v]) => `${k}:${v}`).join(";"))}"${lang === "alt" ? " hidden" : ""}>
+  return `<div class="site theme-${site.theme.id} ${dynamic ? "is-store" : "is-showcase"}" data-lang="${lang}" style="${esc(Object.entries(themeVars(site.theme.id, site.theme.accent, site.theme.industry)).map(([k, v]) => `${k}:${v}`).join(";"))}"${Object.entries(lookAttrs(lookFor(site.theme.industry, site.theme.id))).map(([k, v]) => ` ${k}="${v}"`).join("")}${lang === "alt" ? " hidden" : ""}>
 ${dynamic ? `<div class="s-storebar">${esc(storeBar(site, u))}</div>` : ""}
 ${site.festival ? `<div class="s-festive s-fest-${site.festival.id}"><span>${FEST_ICON[site.festival.id]} ${esc(festGreeting(site.festival.id, u))}</span>${site.festival.message ? `<em>${esc(site.festival.message)}</em>` : ""}</div>` : ""}
 <header class="s-header"><div class="s-wrap s-header-row"><a href="#${idp}top" class="s-brand">${esc(L.businessName)}</a>

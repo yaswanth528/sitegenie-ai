@@ -29,6 +29,7 @@ export const SitePlanSchema = z.object({
   language: z.string().describe("Language(s) the owner spoke, e.g. 'Kannada', 'Hinglish'"),
   category: z.string().describe("Short business type in English, e.g. 'women's ethnic wear', 'bakery', 'kirana store'"),
   industry: z.enum([...INDUSTRY_IDS, "other"]).describe("The closest industry in the reference list, or 'other' if none fits. Used to borrow the look of good sites in that industry."),
+  ownerStyleRequest: z.boolean().describe("True only if the owner explicitly asked for a particular colour, style, theme, layout or banner (e.g. 'make it green', 'dark and modern'). False otherwise: then the reference industry's look is applied automatically."),
   themeId: z.enum(THEME_IDS).describe(
     "boutique: clothing, sarees, beauty, salons. kitchen: food, bakery, sweets, restaurants, tiffin. fresh: grocery, kirana, fruits, vegetables, dairy, organic. studio: services, tuition, repairs, consultants, fitness. craft: handmade, jewellery, pottery, home decor, gifts. bazaar: electronics, mobiles, hardware, general stores, anything else.",
   ),
@@ -175,7 +176,7 @@ export type SiteContent = {
   category: string;
   language: string;
   siteType: "static" | "dynamic";
-  theme: { id: ThemeId; accent: number; heroStyle: "full" | "split"; layout?: Layout };
+  theme: { id: ThemeId; accent: number; heroStyle: "full" | "split"; layout?: Layout; industry?: string };
   headline: string;
   subheadline: string;
   about: string | null;

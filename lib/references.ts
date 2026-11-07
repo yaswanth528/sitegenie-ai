@@ -202,3 +202,24 @@ export function referencePrompt(): string {
   return `REFERENCE WEBSITES — what good sites in each kind of business look like. Pick the ONE industry id below that is closest to this business (or "other" if none fits). Then design the way those reference brands do: use the suggested theme, layout and banner style as your starting point, use the suggested colour option unless the owner asks otherwise, and follow the feel for photo style and tone of voice. The owner's own words and photos always win over these defaults (for example, if they ask for green, or say they sell only a few items). Take the approach, never the content: do not copy or mention any reference brand's name, logo, slogan, text, offers or claims, and do not claim anything the owner didn't say.
 ${lines.join("\n")}`;
 }
+
+// The design a new site gets. The planner names the industry; its theme, colour, layout and banner are
+// applied here in code, unless the owner asked for a particular style (then the planner's own choices
+// stand) or uploaded product photos that a text-only menu would hide.
+export type Design = { id: ThemeId; accent: number; layout: Layout; heroStyle: "full" | "split"; industry?: string };
+
+export function designFor(
+  plan: { industry: string; ownerStyleRequest: boolean; themeId: ThemeId; accent: number; layout: Layout; heroStyle: "full" | "split" },
+  ownPhotos: boolean,
+): Design {
+  const ind = industryById(plan.industry);
+  const use = !!ind && !plan.ownerStyleRequest;
+  const layout = use ? ind.layout : plan.layout;
+  return {
+    id: use ? ind.theme : plan.themeId,
+    accent: use ? ind.accent : plan.accent,
+    layout: layout === "menu" && ownPhotos ? "grid" : layout,
+    heroStyle: use ? ind.hero : plan.heroStyle,
+    industry: ind ? ind.id : undefined,
+  };
+}
