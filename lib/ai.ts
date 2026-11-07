@@ -142,12 +142,13 @@ Facts — be strict:
 Writing — be warm and short:
 - headline, subheadline, about and product descriptions are marketing copy for a real shop page. Keep them simple, friendly and specific to this business. No claims the owner didn't make (no "best in town", "free delivery", "since 1990" unless said).
 - Write copy in the language the owner spoke, except use English if they spoke English or mixed with lots of English.
+- The headline must say something about the shop; never just the business name plus the city (for example "Rani Silks Mysore"). Build it from what they sell or how they sell it, using only what the owner said (for example "Silk and cotton sarees, picked with care"). If they said very little, a short warm line about their kind of goods is fine, with no claims.
 
 Design:
 - Pick the theme that fits the business type, the colour option that suits it, the product layout, and a hero style. Start from the reference industry's suggestions (see the reference list above).
 - Uploaded photos are numbered from 0 in the order given. Match photos to the products they show, pick the best banner, and put good leftovers in the gallery. Never use one photo twice.
 - For any product without a matching photo, write imagePrompt: a realistic product photo of exactly that item (Indian context), soft natural light, clean simple background, no text, no brand names, logos or packaging labels, no people's faces.
-- heroImagePrompt: a wide, inviting photo that captures this kind of shop in India: its own kind of goods, unbranded. No text, no logos, no brand names, no branded packaging, and never another company's products.
+- heroImagePrompt: a wide, inviting photo that captures this kind of shop in India: its own kind of goods, unbranded. No text, no logos, no brand names, no branded packaging, and never another company's products. Show the shop's goods and the place itself, with no people, no statues, mannequins, idols or figures, and no reflections or mirrors showing people.
 
 Products:
 - If the owner groups products (e.g. "in sarees we have... in kurtis we have..."), set category; otherwise leave it null.

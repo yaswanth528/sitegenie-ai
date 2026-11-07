@@ -36,7 +36,7 @@ export const SitePlanSchema = z.object({
   accent: z.number().describe("0, 1 or 2: which of the theme's three colour options suits this business best"),
   layout: z.enum(LAYOUTS).describe("grid: photo tiles. list: photo beside details. lookbook: big photos. menu: names and prices, no photos. Follow the reference industry unless the owner's products suit another."),
   heroStyle: z.enum(["full", "split"]).describe("full: big photo behind the headline. split: headline beside the photo"),
-  headline: z.string().describe("Short, warm homepage headline (max 8 words) in the owner's language or English"),
+  headline: z.string().describe("Short, warm homepage headline (max 8 words) in the owner's language or English. About what they sell or how; never just the business name plus the city"),
   subheadline: z.string().describe("One sentence saying what they sell and to whom, using only what they said"),
   about: z.string().nullable().describe("2-3 sentences about the business using only facts the owner said; null if they said nothing beyond products"),
   highlights: z.array(z.string()).describe("Up to 3 short selling points the owner actually said (e.g. 'Home delivery in Jayanagar'). Empty if none said."),
@@ -58,7 +58,7 @@ export const SitePlanSchema = z.object({
   ),
   heroMediaIndex: z.number().nullable().describe("Index of the uploaded photo or video best suited as the main banner; null if none"),
   galleryMediaIndexes: z.array(z.number()).describe("Indexes of uploaded media not used above that are worth showing in a gallery"),
-  heroImagePrompt: z.string().describe("If there is no suitable upload: a description for a wide banner photo that sets the mood of this business, no text or logos"),
+  heroImagePrompt: z.string().describe("If there is no suitable upload: a description for a wide banner photo that sets the mood of this business, no text or logos, no people, statues, mannequins or figures"),
   heroImageQuery: z.string().describe("2-4 English words to search a stock photo library for a banner, e.g. 'indian saree shop'"),
 });
 
