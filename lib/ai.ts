@@ -142,7 +142,7 @@ Facts — be strict:
 Writing — be warm and short:
 - headline, subheadline, about and product descriptions are marketing copy for a real shop page. Keep them simple, friendly and specific to this business. No claims the owner didn't make (no "best in town", "free delivery", "since 1990" unless said).
 - Write copy in the language the owner spoke, except use English if they spoke English or mixed with lots of English.
-- The headline must say something about the shop; never just the business name plus the city (for example "Rani Silks Mysore"). Build it from what they sell or how they sell it, using only what the owner said (for example "Silk and cotton sarees, picked with care"). If they said very little, a short warm line about their kind of goods is fine, with no claims.
+- The headline must say something about the shop; never just the business name plus the city (for example "Rani Silks Mysore"). Build it from what they sell or how they sell it, using only what the owner said (for example "Silk and cotton sarees for every occasion"; this is only an illustration of the style, never copy it, and never add qualities like "picked with care", "finest" or "trusted" that the owner did not say). If they said very little, a short warm line about their kind of goods is fine, with no claims.
 
 Design:
 - Pick the theme that fits the business type, the colour option that suits it, the product layout, and a hero style. Start from the reference industry's suggestions (see the reference list above).
