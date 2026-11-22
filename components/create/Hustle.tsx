@@ -3,10 +3,11 @@
 // running steps (not smooth tweening), a ground that scrolls past, cactuses to hop over. All SVG parts moved by CSS
 // (see app/hustle.css). No words in it: the page's own label says what is happening.
 //   variant "run"   : runs along and hops over a cactus every few seconds
+//   orb: drawn in white and cropped to fit inside the big round mic button, in place of the mic icon
 //   variant "carry" : runs flat out balancing a stack of papers on its head, arms up; a sheet flutters off now and then
 // Decorative only (aria-hidden); with reduced motion the figure just stands.
 
-type Props = { variant?: "run" | "carry"; mini?: boolean; className?: string };
+type Props = { variant?: "run" | "carry"; mini?: boolean; orb?: boolean; className?: string };
 
 const TEAL = "#0E8F8F";
 
@@ -30,18 +31,18 @@ function Lines({ d }: { d: string }) {
   );
 }
 
-export function Hustle({ variant = "run", mini, className }: Props) {
+export function Hustle({ variant = "run", mini, orb, className }: Props) {
   const carry = variant === "carry";
   const steady = carry || mini; // no cactus and no hop
   return (
     <svg
-      className={`hg hg-${variant} ${mini ? "hg-mini" : ""} ${className ?? ""}`}
-      viewBox={mini ? "34 8 56 66" : "0 -24 220 106"}
+      className={`hg hg-${variant} ${mini ? "hg-mini" : ""} ${orb ? "hg-orb" : ""} ${className ?? ""}`}
+      viewBox={mini ? "34 8 56 66" : orb ? "22 -17 100 96" : "0 -24 220 106"}
       aria-hidden="true"
       focusable="false"
     >
       {/* sky: a slow cloud */}
-      {!mini && (
+      {!mini && !orb && (
         <g className="hg-cloud">
           <path d="M0 -2 h5 q1 -6 7 -5 q4 -6 10 -1 q7 -1 7 6 z" />
         </g>

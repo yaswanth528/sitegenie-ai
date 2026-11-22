@@ -65,6 +65,9 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
         <span className="cf-orb-ring r2" aria-hidden="true" />
         {recording ? (
           <span className="cf-orb-stop" aria-hidden="true" />
+        ) : state === "transcribing" ? (
+          // While the words are being written down, a little runner hurries inside the button, where the mic icon was.
+          <Hustle variant="run" orb />
         ) : (
           <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true">
             <rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor" />
@@ -77,18 +80,11 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
           ×
         </button>
       )}
-      {state === "transcribing" ? (
-        // While the words are being written down, a helper hurries so the wait feels short and a bit funny.
-        <div className="hg-spot">
-          <Hustle variant="run" />
-        </div>
-      ) : (
-        <div className="cf-wave" aria-hidden="true">
-          {Array.from({ length: BARS }, (_, i) => (
-            <span key={i} ref={(el) => void (bars.current[i] = el)} />
-          ))}
-        </div>
-      )}
+      <div className="cf-wave" aria-hidden="true">
+        {Array.from({ length: BARS }, (_, i) => (
+          <span key={i} ref={(el) => void (bars.current[i] = el)} />
+        ))}
+      </div>
       <p className="cf-mic-label" aria-live="polite">
         {recording
           ? t("micListening", { time: `0:${String(seconds).padStart(2, "0")}`, left: left <= 10 ? t("micLeft", { s: left }) : "" })

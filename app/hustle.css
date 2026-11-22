@@ -4,6 +4,12 @@
 .hg { --hg-t: 2.4s; display: block; width: min(100%, 260px); height: auto; overflow: visible; fill: none; stroke: #0d2b36; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .hg-mini { width: 30px; overflow: hidden; --hg-t: 2.4s; }
 
+/* inside the big round mic button: white lines on the teal orb, cropped to the circle */
+.hg-orb { width: 82px; overflow: hidden; stroke: #fff; }
+.hg-orb .hg-head { fill: #0f8a95; }
+.hg-orb .hg-eye { fill: #fff; }
+.hg-orb .hg-bumps { stroke-opacity: 0.55; }
+.hg-orb .hg-sweat { fill: #bff5ee; }
 .hg-ground { stroke-width: 2.5; }
 .hg-bumps { stroke-width: 2; stroke-opacity: 0.5; stroke-dasharray: 6 14 3 17; animation: hg-bumps calc(var(--hg-t) / 6) linear infinite; }
 .hg-cloud { stroke-width: 2; stroke-opacity: 0.3; animation: hg-cloud 5.5s linear infinite; }
