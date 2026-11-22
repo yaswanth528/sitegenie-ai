@@ -88,15 +88,44 @@ const tryOptions = (retries: number) => ({
   retries: retries > 0 ? { strategy: "attempt-count-backoff" as const, maxRetries: retries, retryConnectionErrors: true } : { strategy: "none" as const },
 });
 
+// When Gemini is overloaded ("503 ... high demand"), the main model can take 30+ seconds to give up (2026-11-22 live logs:
+// 32 s and 38 s for a 14 KB recording). So if the main model hasn't answered after a few seconds, the everyday model is
+// asked at the same time and whichever answers first wins. A healthy main model answers in 2-5 s, before the second
+// request is ever sent, so this costs nothing then.
+const hedgeMs = () => Number(process.env.GEMINI_HEDGE_MS) || 6000;
+
 export async function transcribeAudio(base64: string, mimeType: string, language: string): Promise<string> {
-  try {
-    return await transcribeWith(TRANSCRIBE_MODEL, base64, mimeType, language, 1);
-  } catch (err) {
-    // Busy, stuck or over the free limit: fall back to the everyday model rather than failing.
-    if (TRANSCRIBE_MODEL === MODEL) throw err;
-    console.error(`Transcription with ${TRANSCRIBE_MODEL} failed, using ${MODEL}:`, (err as Error).message);
-    return transcribeWith(MODEL, base64, mimeType, language, 0);
-  }
+  if (TRANSCRIBE_MODEL === MODEL) return transcribeWith(MODEL, base64, mimeType, language, 1);
+  return new Promise<string>((resolve, reject) => {
+    let settled = false;
+    let fallbackStarted = false;
+    let failures = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const win = (text: string) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve(text);
+    };
+    const lose = (model: string) => (err: unknown) => {
+      console.error(`Transcription with ${model} failed:`, (err as Error).message);
+      failures++;
+      if (!fallbackStarted) startFallback(); // the main model gave up: don't wait for the timer
+      if (failures >= 2 && !settled) {
+        settled = true;
+        clearTimeout(timer);
+        reject(err);
+      }
+    };
+    const startFallback = () => {
+      if (fallbackStarted || settled) return;
+      fallbackStarted = true;
+      clearTimeout(timer);
+      transcribeWith(MODEL, base64, mimeType, language, 0).then(win, lose(MODEL));
+    };
+    timer = setTimeout(startFallback, hedgeMs());
+    transcribeWith(TRANSCRIBE_MODEL, base64, mimeType, language, 1).then(win, lose(TRANSCRIBE_MODEL));
+  });
 }
 
 async function transcribeWith(model: string, base64: string, mimeType: string, language: string, retries: number): Promise<string> {

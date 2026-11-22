@@ -126,10 +126,43 @@ test("2b. a STUCK Gemini (never answers) ends quickly with a clear 503 the brows
     assert.match((await r.json()).error, /busy right now/i);
     assert.ok(took < 15000, `ended in ${took} ms`);
     const models = mock.state.calls.filter((c) => c.kind === "transcribe").slice(calls).map((c) => c.model);
-    assert.deepEqual(models, ["gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"], "main model try + one retry, then the fallback once");
+    assert.deepEqual([...models].sort(), ["gemini-3.5-flash", "gemini-3.5-flash", "gemini-3.5-flash-lite"], "main model try + one retry, and the fallback asked once");
   } finally {
     mock.state.hangAll = false;
     delete process.env.GEMINI_TRANSCRIBE_TIMEOUT_MS;
+  }
+});
+
+test("2c. an OVERLOADED main model (slow to answer) does not make the owner wait: the everyday model is asked at the same time and wins", async () => {
+  // 2026-11-22 live: "503 high demand" from gemini-3.5-flash made recordings take 32-38 s. Real hedge delay is 6 s.
+  process.env.GEMINI_HEDGE_MS = "300";
+  process.env.GEMINI_TRANSCRIBE_TIMEOUT_MS = "2500";
+  try {
+    const calls = mock.count("transcribe");
+    mock.state.hangNext.push("transcribe"); // the first request (to the main model) hangs
+    const t0 = Date.now();
+    const r = await routes.transcribe.POST(req("/api/transcribe", { method: "POST", body: audioForm(800) }));
+    const took = Date.now() - t0;
+    assert.equal(r.status, 200, "answered by the fallback while the main model was stuck");
+    assert.ok(took < 2000, `answered in ${took} ms, not after the main model's whole time limit`);
+    const models = mock.state.calls.filter((c) => c.kind === "transcribe").slice(calls).map((c) => c.model);
+    assert.deepEqual(models.slice(0, 2), ["gemini-3.5-flash", "gemini-3.5-flash-lite"], "main model first, fallback second");
+  } finally {
+    delete process.env.GEMINI_HEDGE_MS;
+    delete process.env.GEMINI_TRANSCRIBE_TIMEOUT_MS;
+  }
+});
+
+test("2d. a healthy main model is never hedged: one request, no fallback call", async () => {
+  process.env.GEMINI_HEDGE_MS = "300";
+  try {
+    const calls = mock.count("transcribe");
+    const r = await routes.transcribe.POST(req("/api/transcribe", { method: "POST", body: audioForm(800) }));
+    assert.equal(r.status, 200);
+    await new Promise((res) => setTimeout(res, 500)); // past the hedge delay
+    assert.equal(mock.count("transcribe") - calls, 1, "a fast answer cancels the second request before it is sent");
+  } finally {
+    delete process.env.GEMINI_HEDGE_MS;
   }
 });
 
