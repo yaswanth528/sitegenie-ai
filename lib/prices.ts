@@ -1,5 +1,7 @@
 // Prices from the MVP scope: creation ₹1,999 one-time; dynamic adds ₹3,000 a year.
-export const PRICES = { static: 1999, dynamic: 1999 + 3000 } as const;
+// TEMPORARY (2026-11-22): ₹1 so the first LIVE Razorpay payment costs one rupee. Set STATIC_PRICE back to 1999 before real customers.
+const STATIC_PRICE = 1;
+export const PRICES = { static: STATIC_PRICE, dynamic: STATIC_PRICE + 3000 } as const;
 export const YEARLY = 3000; // dynamic plan renewal
 export const GRACE_DAYS = 15; // online orders keep working this long after the paid year ends
 export const REMIND_DAYS = 30; // remind the owner this many days before renewal

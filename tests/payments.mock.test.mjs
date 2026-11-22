@@ -28,7 +28,7 @@ const ctx = (slug) => ({ params: Promise.resolve({ slug }) });
 const WEBHOOK_SECRET = "fake-webhook-secret-not-real";
 const checkoutSig = (orderId, paymentId) => createHmac("sha256", FAKE_KEY_SECRET).update(`${orderId}|${paymentId}`).digest("hex");
 
-let gemini, rz, routes, draft;
+let gemini, rz, routes, draft, PRICE; // PRICE = what a static site costs now (read from lib/prices.ts, so the tests survive a price change)
 const created = [];
 
 before(async () => {
@@ -47,6 +47,7 @@ before(async () => {
     if (url.hostname === "127.0.0.1" || url.hostname === "localhost") return realFetch(input, init);
     return Promise.reject(new TypeError(`blocked in tests: ${url.hostname}`));
   };
+  PRICE = (await load("lib/prices.ts")).PRICES.static;
   routes = {
     build: await load("app/api/build/route.ts"),
     pages: await load("app/api/pages/route.ts"),
@@ -85,7 +86,7 @@ const hook = (event, secret = WEBHOOK_SECRET) => {
 };
 const captured = (p) => ({ event: "payment.captured", payload: { payment: { entity: { id: p.id, order_id: p.order_id } } } });
 
-test("1. order: the server sets the amount (₹1,999 = 199900 paise) and the browser cannot change it", async () => {
+test("1. order: the server sets the amount (the site price, in paise) and the browser cannot change it", async () => {
   const s = await newSite("Pay Test One");
   let r = await routes.order.POST(json(`/api/pay/${s.slug}/order`, {}, { "x-edit-key": "wrong-key-wrong-key-wrong" }), ctx(s.slug));
   assert.equal(r.status, 403, "no edit key -> refused, no order created");
@@ -93,13 +94,13 @@ test("1. order: the server sets the amount (₹1,999 = 199900 paise) and the bro
   const { res, body } = await startOrder({ ...s, headers: s.headers });
   assert.equal(res.status, 200);
   assert.equal(body.provider, "razorpay");
-  assert.equal(body.amount, 199900);
+  assert.equal(body.amount, PRICE * 100);
   assert.equal(body.keyId, FAKE_KEY_ID);
   assert.ok(!JSON.stringify(body).includes(FAKE_KEY_SECRET), "the secret never leaves the server");
   assert.equal(rz.state.orders.get(body.orderId).notes.slug, s.slug);
   // an amount sent by the browser is ignored
   r = await routes.order.POST(json(`/api/pay/${s.slug}/order`, { amount: 100, charge: 1 }, s.headers), ctx(s.slug));
-  assert.equal((await r.json()).amount, 199900);
+  assert.equal((await r.json()).amount, PRICE * 100);
 });
 
 test("2. wrong keys at Razorpay: the customer is told it is a setup problem (401), not shown Razorpay's error", async () => {
@@ -130,7 +131,7 @@ test("4. a real payment of the wrong amount, or on another site's order, is refu
   const s = await newSite("Pay Test Mismatch");
   const other = await newSite("Pay Test Other");
   const { body } = await startOrder(s);
-  const short = rz.pay(body.orderId, { amount: 100 }); // paid ₹1 on a ₹1,999 order
+  const short = rz.pay(body.orderId, { amount: PRICE * 100 + 100 }); // paid ₹1 more than the order
   let r = await payRoute(s, body.orderId, short.id);
   assert.equal(r.status, 400);
   assert.match((await r.json()).error, /amount/i);
@@ -156,16 +157,16 @@ test("5. a good payment is recorded once: an 'authorized' payment is captured, r
   const r = await payRoute(s, body.orderId, p.id);
   assert.equal(rz.state.payments.get(p.id).status, "captured", "the server captured the authorized payment");
   assert.equal(r.status, 502, "going live fails here on purpose (no Cloudflare in tests) ...");
-  assert.equal((await r.json()).paid, 1999, "... but the response says what was paid");
+  assert.equal((await r.json()).paid, PRICE, "... but the response says what was paid");
   let site = await stored(s.slug);
-  assert.equal(site.payment.amount, 1999);
+  assert.equal(site.payment.amount, PRICE);
   assert.deepEqual(site.payment.paymentIds, [p.id]);
   assert.equal(site.payment.gateway, "razorpay");
   assert.equal(site.payment.mode, "test");
   // pressing the button again / replaying the same payment never records a second payment
   await payRoute(s, body.orderId, p.id);
   site = await stored(s.slug);
-  assert.equal(site.payment.amount, 1999);
+  assert.equal(site.payment.amount, PRICE);
   assert.deepEqual(site.payment.paymentIds, [p.id]);
   // and a paid site refuses to start another order
   const again = await startOrder(s);
@@ -195,7 +196,7 @@ test("7. webhook: a bad or missing signature is refused; a paid-in-the-browser p
   await payRoute(s, body.orderId, p.id); // the browser records it
   r = await hook(captured(p));
   assert.deepEqual(await r.json(), { ok: true, already: true });
-  assert.equal((await stored(s.slug)).payment.amount, 1999);
+  assert.equal((await stored(s.slug)).payment.amount, PRICE);
 });
 
 test("8. webhook alone (customer closed the tab after paying): recorded once, a repeat is a no-op", async () => {
@@ -206,11 +207,11 @@ test("8. webhook alone (customer closed the tab after paying): recorded once, a 
   assert.equal(r.status, 200);
   assert.deepEqual(await r.json(), { ok: true, recorded: true });
   let site = await stored(s.slug);
-  assert.equal(site.payment.amount, 1999);
+  assert.equal(site.payment.amount, PRICE);
   assert.deepEqual(site.payment.paymentIds, [p.id]);
   r = await hook(captured(p));
   assert.deepEqual(await r.json(), { ok: true, already: true });
-  assert.equal((await stored(s.slug)).payment.amount, 1999);
+  assert.equal((await stored(s.slug)).payment.amount, PRICE);
   // other events and orders that are not ours are ignored
   r = await hook({ event: "payment.failed", payload: {} });
   assert.equal((await r.json()).ignored, "payment.failed");
@@ -219,7 +220,7 @@ test("8. webhook alone (customer closed the tab after paying): recorded once, a 
 test("9. webhook with a payment that doesn't match what is due is ignored, nothing is recorded", async () => {
   const s = await newSite("Pay Test Hook C");
   const { body } = await startOrder(s);
-  const p = rz.pay(body.orderId, { amount: 500 });
+  const p = rz.pay(body.orderId, { amount: PRICE * 100 + 500 });
   const r = await hook(captured(p));
   assert.equal((await r.json()).ignored, "mismatch");
   assert.equal((await stored(s.slug)).payment, undefined);
