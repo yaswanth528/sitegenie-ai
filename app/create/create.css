@@ -320,3 +320,9 @@
 @media (prefers-reduced-motion: reduce) { .cf-orb-wave line { animation: none; } }
 
 .cf-langs button.cf-lang-more { background: transparent; box-shadow: inset 0 0 0 1px var(--cf-line); font-weight: 700; color: #0b5d7a; }
+
+/* phones: the four "say this" hints take two short rows instead of four tall ones */
+@media (max-width: 520px) {
+  .cf-say { gap: 6px; }
+  .cf-say li { padding: 5px 10px; gap: 5px; font-size: 0.8rem; }
+}

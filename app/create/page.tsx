@@ -315,11 +315,9 @@ export default function CreatePage() {
                   </button>
                 );
               })}
-              {!moreLangs && (
-                <button type="button" className="cf-lang-more" aria-expanded="false" onClick={() => setMoreLangs(true)}>
-                  {t("langMore")} ▾
-                </button>
-              )}
+              <button type="button" className="cf-lang-more" aria-expanded={moreLangs} onClick={() => setMoreLangs((v) => !v)}>
+                {moreLangs ? `${t("langLess")} ▴` : `${t("langMore")} ▾`}
+              </button>
             </div>
 
             {offer && (

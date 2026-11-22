@@ -132,6 +132,7 @@ export const bn: UiDict = {
   step3of3: "ধাপ 3 / 3",
   speechLangAria: "আপনি যে ভাষায় বলবেন",
   langMore: "আরও ভাষা",
+  langLess: "কম ভাষা",
   errNetwork: "নেটওয়ার্কে সমস্যা। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
   errNetworkShort: "নেটওয়ার্কে সমস্যা। আবার চেষ্টা করুন।",
   errBuild: "ওয়েবসাইট বানানো গেল না।",

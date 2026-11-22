@@ -132,6 +132,7 @@ export const kn: UiDict = {
   step3of3: "ಹಂತ 3/3",
   speechLangAria: "ನೀವು ಮಾತನಾಡುವ ಭಾಷೆ",
   langMore: "ಇನ್ನಷ್ಟು ಭಾಷೆಗಳು",
+  langLess: "ಕಡಿಮೆ ಭಾಷೆಗಳು",
   errNetwork: "ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   errNetworkShort: "ನೆಟ್‌ವರ್ಕ್ ದೋಷ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   errBuild: "ವೆಬ್‌ಸೈಟ್ ಮಾಡಲಾಗಲಿಲ್ಲ.",

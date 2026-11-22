@@ -132,6 +132,7 @@ export const gu: UiDict = {
   step3of3: "પગલું 3/3",
   speechLangAria: "તમે જે ભાષામાં બોલશો",
   langMore: "વધુ ભાષાઓ",
+  langLess: "ઓછી ભાષાઓ",
   errNetwork: "નેટવર્ક ભૂલ. કનેક્શન ચેક કરો અને ફરી પ્રયત્ન કરો.",
   errNetworkShort: "નેટવર્ક ભૂલ. ફરી પ્રયત્ન કરો.",
   errBuild: "વેબસાઇટ બનાવી શકાઈ નહીં.",

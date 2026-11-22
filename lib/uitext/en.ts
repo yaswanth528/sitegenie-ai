@@ -142,6 +142,7 @@ export const en = {
   step3of3: "Step 3 of 3",
   speechLangAria: "Language you’ll speak",
   langMore: "More languages",
+  langLess: "Fewer languages",
   errNetwork: "Network error. Check your connection and try again.",
   errNetworkShort: "Network error. Try again.",
   errBuild: "Couldn’t build the website.",

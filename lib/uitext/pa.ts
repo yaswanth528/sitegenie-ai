@@ -132,6 +132,7 @@ export const pa: UiDict = {
   step3of3: "ਕਦਮ 3 / 3",
   speechLangAria: "ਜਿਸ ਭਾਸ਼ਾ ਵਿੱਚ ਤੁਸੀਂ ਬੋਲੋਗੇ",
   langMore: "ਹੋਰ ਭਾਸ਼ਾਵਾਂ",
+  langLess: "ਘੱਟ ਭਾਸ਼ਾਵਾਂ",
   errNetwork: "ਨੈੱਟਵਰਕ ਦੀ ਸਮੱਸਿਆ। ਆਪਣਾ ਕਨੈਕਸ਼ਨ ਦੇਖੋ ਅਤੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
   errNetworkShort: "ਨੈੱਟਵਰਕ ਦੀ ਸਮੱਸਿਆ। ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
   errBuild: "ਵੈੱਬਸਾਈਟ ਬਣ ਨਹੀਂ ਸਕੀ।",
