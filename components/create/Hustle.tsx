@@ -1,111 +1,105 @@
-// A small helper character who hurries while the owner waits (after a recording: "writing down what you said",
-// then "checking what you said"). Drawn in code (SVG parts moved by CSS, see app/hustle.css), in the Peacock & Gold
-// palette, with no words in it: the page's own label says what is happening.
-//   variant "run"   : sprinting flat out (sweat, dust, speed lines)
-//   variant "carry" : sprinting while balancing a tall stack of papers on the head; a sheet flutters off now and then
-// The run cycle follows the references we studied: both feet leave the ground (flight phase), the body dips on contact
-// and rises in the air, arms swing opposite to the legs. Everything is decorative (aria-hidden); with reduced motion
-// the character just stands.
+// A stick-figure runner who keeps the owner company while they wait (after a recording: "writing down what you said",
+// then "checking what you said"). Drawn in the spirit of Chrome's offline dinosaur game: plain ink lines, two-frame
+// running steps (not smooth tweening), a ground that scrolls past, cactuses to hop over. All SVG parts moved by CSS
+// (see app/hustle.css). No words in it: the page's own label says what is happening.
+//   variant "run"   : runs along and hops over a cactus every few seconds
+//   variant "carry" : runs flat out balancing a stack of papers on its head, arms up; a sheet flutters off now and then
+// Decorative only (aria-hidden); with reduced motion the figure just stands.
 
 type Props = { variant?: "run" | "carry"; mini?: boolean; className?: string };
 
-const SKIN = "#F0B07A";
-const SKIN_FAR = "#D99A66";
-const PANTS = "#08394D";
-const PANTS_FAR = "#052B3A";
 const TEAL = "#0E8F8F";
-const PEACOCK = "#0B5D7A";
-const GOLD = "#D9A441";
-const GOLD_DARK = "#A87B22";
-const INK = "#0D2B36";
 
-function Arm({ cls, skin, up }: { cls: string; skin: string; up?: boolean }) {
-  return (
-    <g className={`hg-arm ${cls} ${up ? "hg-arm-up" : ""}`}>
-      <line x1="100" y1="80" x2="100" y2="97" stroke={skin} strokeWidth="7" strokeLinecap="round" />
-      <g className="hg-fore">
-        <line x1="100" y1="97" x2="100" y2="113" stroke={skin} strokeWidth="6.5" strokeLinecap="round" />
-        <circle cx="100" cy="114" r="4.6" fill={skin} />
-      </g>
-    </g>
-  );
-}
+// Body anchor points (facing right): head centre, neck, hip. Ground is at y = 71.
+const LEG_A = "57,47 67,56 73,64 M57,47 53,58 47,69"; // front foot lifted forward, back foot pushing off
+const LEG_B = "57,47 62,58 66,70 M57,47 52,56 44,60"; // front foot landing, back foot kicked up
+const LEG_JUMP = "57,47 66,54 71,61 M57,47 62,56 57,63"; // both knees tucked
+const ARM_A = "60,31 67,36 72,30 M60,31 53,35 48,41";
+const ARM_B = "60,31 66,38 72,43 M60,31 53,33 47,28";
+const ARM_UP = "60,31 69,26 73,10 M60,31 51,26 52,10"; // hands on the paper stack
+const ARM_JUMP = "60,31 67,25 72,18 M60,31 53,26 48,19";
 
-function Leg({ cls, pants, shoe }: { cls: string; pants: string; shoe: string }) {
+function Lines({ d }: { d: string }) {
+  // "x,y x,y x,y M x,y x,y ..." -> one polyline per limb
   return (
-    <g className={`hg-thigh ${cls}`}>
-      <line x1="100" y1="106" x2="100" y2="128" stroke={pants} strokeWidth="10" strokeLinecap="round" />
-      <g className="hg-shin">
-        <line x1="100" y1="128" x2="100" y2="149" stroke={pants} strokeWidth="9" strokeLinecap="round" />
-        <ellipse cx="105" cy="153" rx="9.5" ry="4.8" fill={shoe} />
-      </g>
-    </g>
+    <>
+      {d.split("M").map((part) => (
+        <polyline key={part} points={part.trim()} />
+      ))}
+    </>
   );
 }
 
 export function Hustle({ variant = "run", mini, className }: Props) {
   const carry = variant === "carry";
+  const steady = carry || mini; // no cactus and no hop
   return (
-    <svg className={`hg hg-${variant} ${mini ? "hg-mini" : ""} ${className ?? ""}`} viewBox="0 -18 220 186" aria-hidden="true" focusable="false">
-      {/* ground that streams past, and the shadow that shrinks while airborne */}
-      <line className="hg-ground" x1="6" y1="159" x2="214" y2="159" />
-      <ellipse className="hg-shadow" cx="102" cy="160" rx="21" ry="3.2" />
+    <svg
+      className={`hg hg-${variant} ${mini ? "hg-mini" : ""} ${className ?? ""}`}
+      viewBox={mini ? "34 8 56 66" : "0 -24 220 106"}
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* sky: a slow cloud */}
+      {!mini && (
+        <g className="hg-cloud">
+          <path d="M0 -2 h5 q1 -6 7 -5 q4 -6 10 -1 q7 -1 7 6 z" />
+        </g>
+      )}
 
-      {/* speed lines and dust (behind the runner) */}
-      <g className="hg-speed">
-        <line x1="62" y1="86" x2="40" y2="86" />
-        <line x1="66" y1="104" x2="38" y2="104" />
-        <line x1="64" y1="122" x2="46" y2="122" />
-      </g>
-      <circle className="hg-dust d1" cx="78" cy="154" r="4" />
-      <circle className="hg-dust d2" cx="78" cy="154" r="4" />
+      {/* ground: a line, and bumps scrolling past at the same speed as the cactus */}
+      <line className="hg-ground" x1="0" y1="71" x2="220" y2="71" />
+      <line className="hg-bumps" x1="-40" y1="77" x2="260" y2="77" />
 
-      <g className="hg-bob">
-        <Leg cls="hg-far" pants={PANTS_FAR} shoe={GOLD_DARK} />
-        <Leg cls="hg-near" pants={PANTS} shoe={GOLD} />
+      {/* the cactus (run only): drifts in from the right, passes under the hop */}
+      {!steady && (
+        <g className="hg-cactus">
+          <polyline points="0,71 0,52" />
+          <polyline points="0,63 -6,63 -6,56" />
+          <polyline points="0,59 6,59 6,53" />
+        </g>
+      )}
 
-        <g className="hg-upper">
-          <Arm cls="hg-far" skin={SKIN_FAR} />
-          {/* torso with a gold sash */}
-          <rect x="84" y="70" width="32" height="42" rx="15" fill={TEAL} />
-          <path d="M86 78 L112 104" stroke={GOLD} strokeWidth="6" strokeLinecap="round" />
-          {!carry && <Arm cls="hg-near" skin={SKIN} />}
+      <g className={steady ? "hg-bob" : "hg-hop"}>
+        {/* head with a gold headband, torso */}
+        <circle className="hg-head" cx="63" cy="19.5" r="7.5" />
+        <path className="hg-band" d="M56.5 16.5 Q63 11.5 69.5 16.5" />
+        <circle className="hg-eye" cx="66.2" cy="19" r="1.3" />
+        <polyline points="61,27 57,47" />
 
-          {/* head */}
-          <circle cx="102" cy="52" r="18" fill={SKIN} />
-          <circle cx="96" cy="51" r="5.6" fill="#fff" />
-          <circle cx="110" cy="51" r="5.6" fill="#fff" />
-          <circle className="hg-pupil" cx="98.2" cy="52" r="2.7" fill={INK} />
-          <circle className="hg-pupil" cx="112.2" cy="52" r="2.7" fill={INK} />
-          <path d="M90 43 L100 46 M105 46 L116 43" stroke={INK} strokeWidth="2.2" strokeLinecap="round" fill="none" />
-          <ellipse className="hg-mouth" cx="106" cy="64" rx="3.6" ry="2.8" fill={INK} />
-          <circle cx="112" cy="58" r="2.6" fill="#E88C7A" opacity="0.7" />
-
-          {/* turban with a gold band and a peacock feather */}
-          <path d="M82 46 Q84 28 102 28 Q121 28 123 46 Q103 40 82 46 Z" fill={PEACOCK} />
-          <path d="M82.5 45 Q103 39 122.5 45" stroke={GOLD} strokeWidth="4" strokeLinecap="round" fill="none" />
-          <g className="hg-feather">
-            <path d="M112 31 Q122 20 130 22" stroke={TEAL} strokeWidth="3" strokeLinecap="round" fill="none" />
-            <ellipse cx="132" cy="22" rx="5.5" ry="3.6" fill={TEAL} transform="rotate(-12 132 22)" />
-            <ellipse cx="132.5" cy="22" rx="2.6" ry="1.8" fill={GOLD} transform="rotate(-12 132.5 22)" />
+        {/* running: two poses swap, like the dinosaur's two feet */}
+        <g className={steady ? "hg-legs-steady" : "hg-legs-run"}>
+          <g className="hg-pose-a">
+            <Lines d={LEG_A} />
+            {!carry && <Lines d={ARM_A} />}
           </g>
+          <g className="hg-pose-b">
+            <Lines d={LEG_B} />
+            {!carry && <Lines d={ARM_B} />}
+          </g>
+        </g>
+        {!steady && (
+          <g className="hg-pose-jump">
+            <Lines d={LEG_JUMP} />
+            <Lines d={ARM_JUMP} />
+          </g>
+        )}
 
-          {/* carrying: the near arm reaches up past the cheek to steady the stack, so it is drawn over the head */}
-          {carry && <Arm cls="hg-near" skin={SKIN} up />}
-
-          {/* the sweat */}
-          <path className="hg-sweat s1" d="M81 38 q-3 5 0 7 q3 -2 0 -7 z" fill="#4FD1C5" />
-          <path className="hg-sweat s2" d="M124 56 q-3 5 0 7 q3 -2 0 -7 z" fill="#4FD1C5" />
-
-          {carry && (
+        {/* carrying: arms up on a stack of papers */}
+        {carry && (
+          <>
+            <Lines d={ARM_UP} />
             <g className="hg-stack">
               {[0, 1, 2, 3, 4, 5].map((i) => (
-                <rect key={i} className={`hg-paper p${i}`} x={86 + (i % 2 ? 3 : -1)} y={25 - i * 5.2} width="34" height="5" rx="1.2" fill="#fff" stroke={INK} strokeWidth="1.1" />
+                <rect key={i} className="hg-paper" x={50 + (i % 2 ? 4 : 0)} y={4 - i * 4.6} width="30" height="4" rx="0.8" />
               ))}
-              <rect className="hg-flyer" x="88" y="-8" width="30" height="4.5" rx="1.2" fill="#fff" stroke={INK} strokeWidth="1.1" />
+              <rect className="hg-flyer" x="52" y="-28" width="26" height="3.6" rx="0.8" />
             </g>
-          )}
-        </g>
+          </>
+        )}
+
+        {/* the sweat */}
+        <path className="hg-sweat" d="M54 14 q-2.6 4 0 6 q2.6 -2 0 -6 z" fill={TEAL} stroke="none" />
       </g>
     </svg>
   );

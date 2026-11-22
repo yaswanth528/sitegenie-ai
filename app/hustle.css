@@ -1,72 +1,56 @@
-/* The hurrying helper (components/create/Hustle.tsx). One stride = --hg-t. All motion is transform/opacity.
-   Facing right: a positive rotation swings a limb BACKWARD, a negative one FORWARD. Pivots are in the SVG's own
-   coordinates (hip 100,106; knee 100,128; shoulder 100,80; elbow 100,97). */
-.hg { --hg-t: 0.62s; display: block; width: min(100%, 240px); height: auto; overflow: visible; }
-.hg-mini { width: 40px; --hg-t: 0.5s; }
+/* The stick-figure runner (components/create/Hustle.tsx), in the spirit of Chrome's offline dinosaur game.
+   One lap = --hg-t. The cactus travels 240 units per lap and the ground bumps repeat every 40, so they stay in step.
+   The run poses flip in two hard frames (no tweening); the hop is the only smooth move. */
+.hg { --hg-t: 2.4s; display: block; width: min(100%, 260px); height: auto; overflow: visible; fill: none; stroke: #0d2b36; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.hg-mini { width: 30px; overflow: hidden; --hg-t: 2.4s; }
 
-.hg-ground { stroke: #0b5d7a; stroke-opacity: 0.35; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 16 14; animation: hg-ground var(--hg-t) linear infinite; }
-.hg-shadow { fill: #0d2b36; opacity: 0.18; transform-origin: 102px 160px; animation: hg-shadow calc(var(--hg-t) / 2) ease-in-out infinite; }
+.hg-ground { stroke-width: 2.5; }
+.hg-bumps { stroke-width: 2; stroke-opacity: 0.5; stroke-dasharray: 6 14 3 17; animation: hg-bumps calc(var(--hg-t) / 6) linear infinite; }
+.hg-cloud { stroke-width: 2; stroke-opacity: 0.3; animation: hg-cloud 5.5s linear infinite; }
 
-.hg-bob { animation: hg-bob calc(var(--hg-t) / 2) ease-in-out infinite; }
-.hg-upper { transform: rotate(7deg); transform-origin: 100px 106px; }
+.hg-head { fill: #f6fafa; }
+.hg-band { stroke: #d9a441; stroke-width: 2.6; }
+.hg-eye { fill: #0d2b36; stroke: none; }
+.hg-paper { fill: #fff; stroke-width: 1.6; }
+.hg-flyer { fill: #fff; stroke-width: 1.6; opacity: 0; transform-box: fill-box; transform-origin: center; animation: hg-flyoff 2.6s ease-in infinite; }
+.hg-sweat { opacity: 0; animation: hg-sweat 1s ease-out infinite; }
 
-/* legs: the far leg runs half a stride behind the near leg */
-.hg-thigh { transform-origin: 100px 106px; animation: hg-thigh var(--hg-t) linear infinite; }
-.hg-thigh.hg-far { animation-delay: calc(var(--hg-t) / -2); }
-.hg-shin { transform-origin: 100px 128px; animation: hg-shin var(--hg-t) linear infinite; }
-.hg-far .hg-shin { animation-delay: calc(var(--hg-t) / -2); }
+/* the cactus drifts across the whole width, once per lap */
+.hg-cactus { animation: hg-cactus var(--hg-t) linear infinite; transform: translateX(230px); }
 
-/* arms swing opposite to the legs: the near arm is back when the near leg is forward */
-.hg-arm { transform-origin: 100px 80px; animation: hg-arm var(--hg-t) linear infinite; }
-.hg-arm.hg-far { animation-delay: calc(var(--hg-t) / -2); }
-.hg-fore { transform-origin: 100px 97px; animation: hg-fore var(--hg-t) linear infinite; }
-.hg-far > .hg-fore { animation-delay: calc(var(--hg-t) / -2); }
-/* carrying: the near arm stays up, steadying the stack */
-.hg-arm-up { animation: hg-hold 1.1s ease-in-out infinite; transform: rotate(224deg) scaleY(1.3); } /* a long cartoon arm, to reach the stack */
-.hg-arm-up .hg-fore { animation: none; transform: rotate(6deg); }
+/* running: pose B is hidden unless the animation shows it; during the hop the jump pose takes over */
+.hg-pose-b, .hg-pose-jump { opacity: 0; }
+.hg-legs-run .hg-pose-a, .hg-legs-steady .hg-pose-a { animation: hg-step-a 0.32s linear infinite; }
+.hg-legs-run .hg-pose-b, .hg-legs-steady .hg-pose-b { animation: hg-step-b 0.32s linear infinite; }
+.hg-legs-run { animation: hg-runvis var(--hg-t) linear infinite; }
+.hg-pose-jump { animation: hg-jumpvis var(--hg-t) linear infinite; }
 
-.hg-pupil { animation: hg-look 2.4s ease-in-out infinite; }
-.hg-mouth { transform-origin: 106px 64px; animation: hg-pant calc(var(--hg-t) / 2) ease-in-out infinite; }
-.hg-feather { transform-origin: 112px 31px; animation: hg-flutter calc(var(--hg-t) / 2) ease-in-out infinite; }
+/* the hop is timed so the figure is highest as the cactus passes under it */
+.hg-hop { animation: hg-hop var(--hg-t) linear infinite; }
+.hg-bob { animation: hg-bob 0.32s steps(1, end) infinite; }
+.hg-stack { animation: hg-sway 0.64s ease-in-out infinite; transform-origin: 65px 14px; }
 
-.hg-sweat { opacity: 0; animation: hg-sweat 1.1s ease-out infinite; }
-.hg-sweat.s2 { animation-delay: 0.55s; }
+@keyframes hg-bumps { to { stroke-dashoffset: -40; } }
+@keyframes hg-cloud { from { transform: translateX(240px); } to { transform: translateX(-40px); } }
+@keyframes hg-cactus { from { transform: translateX(230px); } to { transform: translateX(-10px); } }
+@keyframes hg-step-a { 0%, 49.9% { opacity: 1; } 50%, 100% { opacity: 0; } }
+@keyframes hg-step-b { 0%, 49.9% { opacity: 0; } 50%, 100% { opacity: 1; } }
+@keyframes hg-runvis { 0%, 54.9% { opacity: 1; } 55%, 84.9% { opacity: 0; } 85%, 100% { opacity: 1; } }
+@keyframes hg-jumpvis { 0%, 54.9% { opacity: 0; } 55%, 84.9% { opacity: 1; } 85%, 100% { opacity: 0; } }
+@keyframes hg-hop {
+  0%, 54% { transform: translateY(0); animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1); }
+  69% { transform: translateY(-27px); animation-timing-function: cubic-bezier(0.6, 0, 0.8, 0.4); }
+  84%, 100% { transform: translateY(0); }
+}
+@keyframes hg-bob { 0% { transform: translateY(0); } 50% { transform: translateY(-1.6px); } }
+@keyframes hg-sweat { 0% { opacity: 0; transform: translate(0, 0); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(-6px, 14px); } }
+@keyframes hg-sway { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+@keyframes hg-flyoff { 0%, 55% { opacity: 0; transform: translate(0, 24px) rotate(0); } 60% { opacity: 1; transform: translate(0, 24px) rotate(0); } 100% { opacity: 0; transform: translate(-44px, -6px) rotate(-70deg); } }
 
-.hg-speed line { stroke: #0b5d7a; stroke-opacity: 0.4; stroke-width: 3; stroke-linecap: round; animation: hg-speed 0.7s linear infinite; }
-.hg-speed line:nth-child(2) { animation-delay: 0.23s; }
-.hg-speed line:nth-child(3) { animation-delay: 0.46s; }
-.hg-dust { fill: #0b5d7a; opacity: 0; transform-origin: 78px 154px; animation: hg-dust var(--hg-t) ease-out infinite; }
-.hg-dust.d2 { animation-delay: calc(var(--hg-t) / -2); }
-
-/* the stack of papers: sways on the head, and the top sheet flutters away now and then */
-.hg-stack { transform: translateX(5px); transform-origin: 102px 30px; animation: hg-sway 0.9s ease-in-out infinite; }
-.hg-paper.p1, .hg-paper.p3 { transform: translateX(1.2px); }
-.hg-flyer { opacity: 0; transform-box: fill-box; transform-origin: center; animation: hg-flyoff 2.6s ease-in infinite; }
-
-@keyframes hg-ground { to { stroke-dashoffset: 30; } }
-@keyframes hg-shadow { 0%, 100% { transform: scaleX(1); opacity: 0.2; } 50% { transform: scaleX(0.72); opacity: 0.1; } }
-@keyframes hg-bob { 0%, 100% { transform: translateY(3px); } 50% { transform: translateY(-5px); } }
-@keyframes hg-thigh { 0% { transform: rotate(-48deg); } 55% { transform: rotate(42deg); } 100% { transform: rotate(-48deg); } }
-@keyframes hg-shin { 0% { transform: rotate(12deg); } 35% { transform: rotate(4deg); } 55% { transform: rotate(35deg); } 72% { transform: rotate(110deg); } 88% { transform: rotate(55deg); } 100% { transform: rotate(12deg); } }
-@keyframes hg-arm { 0% { transform: rotate(50deg); } 50% { transform: rotate(-54deg); } 100% { transform: rotate(50deg); } }
-@keyframes hg-fore { 0% { transform: rotate(-65deg); } 50% { transform: rotate(-98deg); } 100% { transform: rotate(-65deg); } }
-@keyframes hg-hold { 0%, 100% { transform: rotate(221deg) scaleY(1.3); } 50% { transform: rotate(227deg) scaleY(1.3); } }
-@keyframes hg-look { 0%, 70%, 100% { transform: translate(0, 0); } 78%, 92% { transform: translate(-1.6px, -1px); } }
-@keyframes hg-pant { 0%, 100% { transform: scaleY(0.7); } 50% { transform: scaleY(1.25); } }
-@keyframes hg-flutter { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(10deg); } }
-@keyframes hg-sweat { 0% { opacity: 0; transform: translate(0, 0) scale(0.6); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-7px, 16px) scale(1); } }
-@keyframes hg-speed { 0% { opacity: 0; transform: translateX(14px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateX(-22px); } }
-@keyframes hg-dust { 0% { opacity: 0.45; transform: translate(0, 0) scale(0.5); } 100% { opacity: 0; transform: translate(-18px, -6px) scale(1.9); } }
-@keyframes hg-sway { 0%, 100% { transform: translateX(5px) rotate(-3.5deg); } 50% { transform: translateX(5px) rotate(3.5deg); } }
-@keyframes hg-flyoff { 0%, 55% { opacity: 0; transform: translate(0, 28px) rotate(0); } 60% { opacity: 1; transform: translate(0, 28px) rotate(0); } 100% { opacity: 0; transform: translate(-46px, -8px) rotate(-70deg); } }
-
-/* a busy spot on the page: the helper over its caption */
+/* a busy spot on the page: the runner over its caption */
 .hg-spot { display: grid; justify-items: center; gap: 4px; }
 
 @media (prefers-reduced-motion: reduce) {
   .hg *, .hg { animation: none !important; }
-  .hg-sweat, .hg-dust, .hg-speed, .hg-flyer { opacity: 0 !important; }
-  .hg-arm { transform: rotate(10deg); }
-  .hg-arm.hg-arm-up { transform: rotate(224deg) scaleY(1.3); }
-  .hg-fore { transform: rotate(-30deg); }
+  .hg-sweat, .hg-flyer, .hg-cactus, .hg-cloud { opacity: 0 !important; }
 }
