@@ -299,6 +299,8 @@ html:has(.legal), html:has(.legal) body { background: #f6fafa; }
 /* Language chooser: a visible pill with a globe, used in the home and create bars. */
 .lang-switch { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px 0 10px; height: 36px; border-radius: 999px; border: 1.5px solid rgba(13, 43, 54, 0.3); background: #fff; color: #0d2b36; flex-shrink: 0; }
 .lang-switch svg { flex-shrink: 0; }
+/* the button is a <label>, and the global label rule adds 18px above / 6px below, which pushed it lower than the logo and the step dots */
+.lang-switch { margin-top: 0; margin-bottom: 0; }
 .lang-switch { position: relative; padding: 0 24px 0 10px; }
 .lang-switch-name { font-weight: 700; font-size: 0.9rem; white-space: nowrap; line-height: 1; }
 .lang-switch::after { content: ""; position: absolute; right: 10px; top: 50%; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: translateY(-70%) rotate(45deg); pointer-events: none; }

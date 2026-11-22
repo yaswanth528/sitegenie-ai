@@ -131,6 +131,7 @@ export const or: UiDict = {
   step2of3: "ଧାପ 2 / 3",
   step3of3: "ଧାପ 3 / 3",
   speechLangAria: "ଆପଣ କହିବାକୁ ଥିବା ଭାଷା",
+  langMore: "ଅଧିକ ଭାଷା",
   errNetwork: "ନେଟୱାର୍କ ସମସ୍ୟା। ଇଣ୍ଟରନେଟ୍ ଦେଖି ଆଉ ଥରେ ଚେଷ୍ଟା କରନ୍ତୁ।",
   errNetworkShort: "ନେଟୱାର୍କ ସମସ୍ୟା। ଆଉ ଥରେ ଚେଷ୍ଟା କରନ୍ତୁ।",
   errBuild: "ୱେବସାଇଟ୍ ବନାଯାଇପାରିଲା ନାହିଁ।",

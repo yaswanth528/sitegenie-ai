@@ -318,3 +318,5 @@
 .cf-mic-stop { border: 1.5px solid rgba(11, 93, 122, 0.45); background: #fff; color: #0b5d7a; font: inherit; font-weight: 700; padding: 8px 18px; border-radius: 999px; cursor: pointer; }
 .cf-mic-stop:hover { background: #eef7f8; }
 @media (prefers-reduced-motion: reduce) { .cf-orb-wave line { animation: none; } }
+
+.cf-langs button.cf-lang-more { background: transparent; box-shadow: inset 0 0 0 1px var(--cf-line); font-weight: 700; color: #0b5d7a; }

@@ -25,6 +25,9 @@ import { PRICES } from "@/lib/prices";
 import type { Draft, Live } from "@/lib/schema";
 import "./create.css";
 
+// Shown as buttons from the start, in this order; every other language is behind "More languages".
+const MAIN_LANGS = ["English", "Hindi", "Telugu", "Kannada"];
+
 type Stage = "speak" | "checking" | "ask" | "building" | "review" | "pay" | "done";
 type Question = { question: string; reason: string };
 type Result = { slug: string; editKey: string; whatsapp: string };
@@ -49,6 +52,7 @@ export default function CreatePage() {
   const [offer, setOffer] = useState<Locale | null>(null);
   const [stage, setStage] = useState<Stage>("speak");
   const [lang, setLang] = useState("English");
+  const [moreLangs, setMoreLangs] = useState(false); // the less common languages stay folded away until asked for
   const [transcript, setTranscript] = useState("");
   const [media, setMedia] = useState<Uploaded[]>([]);
   const [aiImages, setAiImages] = useState(true);
@@ -299,15 +303,23 @@ export default function CreatePage() {
             </section>
 
             <div className="cf-langs" role="radiogroup" aria-label={t("speechLangAria")}>
-              {LANGUAGES.map((l) => (
-                <button key={l.name} type="button" role="radio" aria-checked={lang === l.name} className={lang === l.name ? "on" : ""} onClick={() => {
-                    setLang(l.name);
-                    const target = localeForSpeech(l.name);
-                    setOffer(target !== locale ? target : null);
-                  }}>
-                  {l.label}
+              {(moreLangs ? [...MAIN_LANGS, ...LANGUAGES.filter((l) => !MAIN_LANGS.includes(l.name)).map((l) => l.name)] : MAIN_LANGS.includes(lang) ? MAIN_LANGS : [...MAIN_LANGS, lang]).map((name) => {
+                const l = LANGUAGES.find((x) => x.name === name)!;
+                return (
+                  <button key={l.name} type="button" role="radio" aria-checked={lang === l.name} className={lang === l.name ? "on" : ""} onClick={() => {
+                      setLang(l.name);
+                      const target = localeForSpeech(l.name);
+                      setOffer(target !== locale ? target : null);
+                    }}>
+                    {l.label}
+                  </button>
+                );
+              })}
+              {!moreLangs && (
+                <button type="button" className="cf-lang-more" aria-expanded="false" onClick={() => setMoreLangs(true)}>
+                  {t("langMore")} ▾
                 </button>
-              ))}
+              )}
             </div>
 
             {offer && (
