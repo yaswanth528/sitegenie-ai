@@ -181,6 +181,7 @@ export const en = {
   mediaTitle: "Add photos or videos",
   recommended: "Recommended",
   mediaBody: "Shop front, products, your work. We’ll place them on your website. Your own photos make the website feel truly yours. No photos? We’ll create pictures for you.",
+  mediaBodyShort: "Shop front, products, your work. No photos? We’ll create pictures for you.",
   mediaTipBold: "For the best results:",
   mediaTip: "take photos in daylight, holding the phone sideways for your shop front (it becomes the big banner), and one product per photo on a plain background. Full-size phone photos look sharpest; small or screenshot images are shown smaller, never stretched.",
   browseFiles: "Browse files",

@@ -54,10 +54,18 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
         <p>
           <strong>{t("mediaTitle")}</strong> <span className="rec-tag">{t("recommended")}</span>
         </p>
-        <p className="hint">{t("mediaBody")}</p>
-        <p className="hint small media-tip">
+        <p className="hint media-long">{t("mediaBody")}</p>
+        <p className="hint media-short">{t("mediaBodyShort")}</p>
+        <p className="hint small media-tip media-long">
           <strong>{t("mediaTipBold")}</strong> {t("mediaTip")}
         </p>
+        {/* phones: the long tip stays folded until the owner taps it */}
+        <details className="hint small media-tip media-short">
+          <summary>
+            <strong>{t("mediaTipBold")}</strong>
+          </summary>
+          {t("mediaTip")}
+        </details>
         <button type="button" className="btn ghost" onClick={() => input.current?.click()} disabled={full}>
           {t("browseFiles")}
         </button>

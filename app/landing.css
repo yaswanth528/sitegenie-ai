@@ -224,3 +224,42 @@ html:not(.lp-motion) .lp-line:nth-child(2), html:not(.lp-motion) .lp-line:nth-ch
   .lp-line:nth-child(2), .lp-line:nth-child(2) em span { opacity: 1 !important; transform: none !important; }
   .lp-pill::after { display: none; }
 }
+
+/* ---- Phones (under 700px): the same page, much shorter. Laptops and tablets are untouched. ---- */
+.lp-sticky { display: none; }
+@media (max-width: 699px) {
+  /* "How it works" and the two designs become swipe rows, with the next card peeking in */
+  .lp-flow, .lp-duo { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 20px; margin-inline: -20px; padding: 4px 20px 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .lp-flow::-webkit-scrollbar, .lp-duo::-webkit-scrollbar { display: none; }
+  .lp-flow > * { flex: 0 0 82%; scroll-snap-align: center; }
+  .lp-duo > * { flex: 0 0 80%; scroll-snap-align: center; }
+  .lp-flow [data-reveal], .lp-duo [data-reveal] { opacity: 1 !important; transform: none !important; } /* sideways cards must not wait for a scroll-in */
+  .lp-flow-step { padding: 22px 20px; }
+  .lp-flow-step h3, .lp-duo-col h3 { font-size: 1.6rem; }
+  .lp-duo-col .lp-phone { height: 420px; margin-bottom: 8px; }
+
+  /* the feature cards: two columns, smaller */
+  .lp-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .lp-tile-wrap.wide { grid-column: span 2; }
+  .lp .lp-tile { padding: 16px 14px; border-radius: 18px; min-height: 0; gap: 6px; }
+  .lp-tile h3 { font-size: 1.1rem; }
+  .lp-tile p { font-size: 0.88rem; line-height: 1.4; }
+
+  /* pricing: tighter cards */
+  .lp-plans { gap: 14px; }
+  .lp-plan { padding: 24px 20px; border-radius: 22px; }
+  .lp-plan-price { font-size: 2.4rem; }
+  .lp-plan ul { margin: 14px 0 18px; gap: 8px; font-size: 0.97rem; }
+
+  /* less empty space between sections, and smaller section headings */
+  .lp-dark, .lp-designs, .lp-features, .lp-pricing { padding-block: 40px; }
+  .lp-final { padding-block: 52px; }
+  .lp-dark h2, .lp-designs h2, .lp-features h2, .lp-pricing h2, .lp-final h2 { font-size: 2.1rem; }
+  .lp-footer { padding-bottom: 88px; }
+
+  /* a start button that follows the visitor down the page */
+  .lp-sticky { display: block; position: fixed; left: 16px; right: 16px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); z-index: 60; transform: translateY(140%); opacity: 0; pointer-events: none; transition: transform 0.35s ease, opacity 0.35s ease; }
+  .lp-sticky.on { transform: none; opacity: 1; pointer-events: auto; }
+  .lp-sticky .lp-pill { box-shadow: 0 14px 30px -10px rgba(11, 93, 122, 0.7); }
+}
+@media (prefers-reduced-motion: reduce) { .lp-sticky { transition: none; } }

@@ -405,3 +405,12 @@
   .cmp-cols { grid-template-columns: 1fr 1fr; }
   .cmp-col { display: grid; }
 }
+
+/* photos card: full text on laptops, a short version on phones with the tip folded away */
+.media-short { display: none; }
+.media-tip summary { cursor: pointer; }
+@media (max-width: 699px) {
+  .media-long { display: none; }
+  p.media-short { display: block; }
+  details.media-short { display: block; }
+}

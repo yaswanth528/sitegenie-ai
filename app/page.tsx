@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
 import { Reveal } from "@/components/landing/Reveal";
+import { StickyCta } from "@/components/landing/StickyCta";
 import { TalkButton } from "@/components/CustomEnquiry";
 import { LanguageSwitcher, T } from "@/components/I18nProvider";
 import { Logo } from "@/components/Logo";
@@ -44,6 +45,7 @@ export default function Home() {
     <MotionProvider>
     <div className="lp">
       <Reveal />
+      <StickyCta />
       <header className="lp-nav">
         <div className="lp-nav-row">
           <Logo />
