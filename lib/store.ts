@@ -161,11 +161,20 @@ async function deleteDoc(path: string): Promise<void> {
   }
 }
 
+// SQL condition for "documents directly inside folder `dir`" (not in subfolders), with its parameters.
+// It uses a range test, not LIKE: Cloudflare D1 refuses LIKE patterns over 50 bytes ("LIKE or GLOB pattern too
+// complex"), and `catalogues/orders/<slug>/%/%` passes that for any shop whose name makes a long slug.
+// "0" is the character right after "/", so path >= "dir/" AND path < "dir0" is exactly "starts with dir/".
+export function directChildren(dir: string): { where: string; params: (string | number)[] } {
+  return { where: "path >= ? AND path < ? AND instr(substr(path, ?), '/') = 0", params: [`${dir}/`, `${dir}0`, dir.length + 2] };
+}
+
 // Paths of the JSON documents directly inside a folder (not in subfolders).
 async function listPaths(dir: string): Promise<string[]> {
   switch (backend()) {
     case "d1": {
-      const rows = await query<{ path: string }>("SELECT path FROM docs WHERE path LIKE ? AND path NOT LIKE ?", [`${dir}/%`, `${dir}/%/%`]);
+      const { where, params } = directChildren(dir);
+      const rows = await query<{ path: string }>(`SELECT path FROM docs WHERE ${where}`, params);
       return rows.map((r) => r.path);
     }
     case "github":
@@ -181,7 +190,8 @@ async function listPaths(dir: string): Promise<string[]> {
 
 async function listDocs<T>(dir: string): Promise<T[]> {
   if (backend() === "d1") {
-    const rows = await query<{ body: string }>("SELECT body FROM docs WHERE path LIKE ? AND path NOT LIKE ?", [`${dir}/%`, `${dir}/%/%`]);
+    const { where, params } = directChildren(dir);
+    const rows = await query<{ body: string }>(`SELECT body FROM docs WHERE ${where}`, params);
     return rows.map((r) => JSON.parse(r.body) as T);
   }
   const docs = await Promise.all((await listPaths(dir)).map((p) => readDoc<T>(p)));
