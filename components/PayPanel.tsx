@@ -1,9 +1,10 @@
 "use client";
-// "Pay ₹1,999 to get your website", then the site is deployed to its own address.
+// "Pay ₹<price> to get your website", then the site is deployed to its own address.
 // With Razorpay keys on the server, this opens Razorpay's checkout (UPI, cards, netbanking) and the
 // server verifies the payment before anything goes live. Without keys it keeps the pretend payment.
 import { useEffect, useState } from "react";
 import { formatPrice } from "@/lib/catalogue";
+import { PRICES, YEARLY } from "@/lib/prices";
 import type { Live } from "@/lib/schema";
 
 type Props = {
@@ -145,7 +146,7 @@ export function PayPanel({ slug, editKey, siteType, due, upgrade, onLive }: Prop
         <div>
           <p className="pay-plan">{siteType === "dynamic" ? "Dynamic website" : "Static website"}</p>
           <p className="pay-amount">{formatPrice(due)}</p>
-          <p className="hint">{upgrade ? "Upgrade from Static to Dynamic" : siteType === "dynamic" ? "₹1,999 setup + ₹3,000 first year" : "One-time, no yearly fee"}</p>
+          <p className="hint">{upgrade ? "Upgrade from Static to Dynamic" : siteType === "dynamic" ? `${formatPrice(PRICES.static)} setup + ${formatPrice(YEARLY)} first year` : "One-time, no yearly fee"}</p>
         </div>
         {config?.mode === "test" && <span className="test-badge">Test mode</span>}
       </div>

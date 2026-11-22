@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { parseHours } from "@/lib/hours";
 import { BADGES, FESTIVALS, LAYOUTS, THEME_IDS, type Badge, type FestivalId, type Layout, type Media, type Product, type SiteContent, type Translation } from "@/lib/schema";
+import { PRICES, YEARLY } from "@/lib/prices";
 import { THEMES } from "@/lib/themes";
 import { CompareTypes } from "./CompareTypes";
 import { TalkButton } from "./CustomEnquiry";
@@ -118,7 +119,7 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
             <TypeSketch dynamic={false} />
             <strong>Static · Showcase</strong>
             <span>A beautiful catalogue. Customers send their list or ask about a product on WhatsApp.</span>
-            <em>₹1,999 one-time</em>
+            <em>₹{PRICES.static.toLocaleString("en-IN")} one-time</em>
           </button>
           {d.siteType === "dynamic" ? (
             // Websites already built as online stores keep their cart.
@@ -126,7 +127,7 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
               <TypeSketch dynamic />
               <strong>Dynamic · Online store</strong>
               <span>Everything in Showcase, plus cart, checkout, delivery rules, order tracking and your orders list.</span>
-              <em>₹1,999 + ₹3,000/yr</em>
+              <em>₹{PRICES.static.toLocaleString("en-IN")} + ₹{YEARLY.toLocaleString("en-IN")}/yr</em>
             </button>
           ) : (
             <div className="choice">
