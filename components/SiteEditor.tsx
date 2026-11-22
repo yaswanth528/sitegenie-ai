@@ -88,14 +88,19 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
   const set = (patch: Partial<SiteContent> & { whatsapp?: string; ownerEmail?: string | null }) => onChange({ ...d, ...patch });
   const setItem = (i: number, patch: Partial<Product>) => set({ items: d.items.map((it, j) => (j === i ? { ...it, ...patch } : it)) });
   const up = useUpload();
+  const root = useRef<HTMLDivElement>(null);
   const [comparing, setComparing] = useState(false);
+  // On a phone the editor is a long scroll, so the sections that are already chosen for the owner start folded.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 699px)").matches) root.current?.querySelectorAll<HTMLDetailsElement>("details[data-desktop-open]").forEach((el) => (el.open = false));
+  }, []);
   const num = (v: string) => (v.replace(/\D/g, "") ? Number(v.replace(/\D/g, "")) : null);
   const setDelivery = (patch: Partial<NonNullable<SiteContent["delivery"]>>) =>
     set({ delivery: { areas: null, charge: null, freeAbove: null, minOrder: null, ...(d.delivery ?? {}), ...patch } });
   const theme = THEMES[d.theme.id];
 
   return (
-    <div className="editor">
+    <div className="editor" ref={root}>
       <details open>
         <summary>Business</summary>
         <label htmlFor="e-name">Business name</label>
@@ -112,7 +117,7 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
         <input id="e-cat" value={d.category} onChange={(e) => set({ category: e.target.value })} />
       </details>
 
-      <details open>
+      <details open data-desktop-open>
         <summary>Website type</summary>
         <div className="choice-row">
           <button type="button" className={`choice ${d.siteType === "static" ? "on" : ""}`} onClick={() => set({ siteType: "static" })} aria-pressed={d.siteType === "static"}>
@@ -156,7 +161,7 @@ export function SiteEditor<T extends SiteContent & { whatsapp?: string; ownerEma
         )}
       </details>
 
-      <details open>
+      <details open data-desktop-open>
         <summary>Look</summary>
         <div className="theme-row" role="radiogroup" aria-label="Theme">
           {THEME_IDS.map((id) => (

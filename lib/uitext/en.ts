@@ -184,6 +184,7 @@ export const en = {
   mediaBodyShort: "Shop front, products, your work. No photos? We’ll create pictures for you.",
   mediaTipBold: "For the best results:",
   mediaTip: "take photos in daylight, holding the phone sideways for your shop front (it becomes the big banner), and one product per photo on a plain background. Full-size phone photos look sharpest; small or screenshot images are shown smaller, never stretched.",
+  mediaTipShort: "use daylight, hold the phone sideways for your shop front, one product per photo.",
   browseFiles: "Browse files",
   removeFile: "Remove {name}",
   dismiss: "Dismiss",

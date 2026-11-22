@@ -408,9 +408,14 @@
 
 /* photos card: full text on laptops, a short version on phones with the tip folded away */
 .media-short { display: none; }
-.media-tip summary { cursor: pointer; }
 @media (max-width: 699px) {
   .media-long { display: none; }
   p.media-short { display: block; }
-  details.media-short { display: block; }
+}
+
+/* phones: product rows are the longest part of the editor, so their buttons share one row */
+@media (max-width: 699px) {
+  .prod-fields .row.tight { gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+  .prod-fields .row.tight .btn { padding: 6px 10px; font-size: 0.8rem; min-height: 0; }
+  .prod-fields textarea { height: 44px; }
 }

@@ -326,3 +326,6 @@
   .cf-say { gap: 6px; }
   .cf-say li { padding: 5px 10px; gap: 5px; font-size: 0.8rem; }
 }
+
+/* the building screen has orbiting dots that stick out past the screen edge: never let them make the page scroll sideways */
+.cf { overflow-x: clip; }

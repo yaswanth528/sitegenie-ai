@@ -59,13 +59,10 @@ export function MediaPicker({ value, onChange, max = 12 }: { value: Uploaded[]; 
         <p className="hint small media-tip media-long">
           <strong>{t("mediaTipBold")}</strong> {t("mediaTip")}
         </p>
-        {/* phones: the long tip stays folded until the owner taps it */}
-        <details className="hint small media-tip media-short">
-          <summary>
-            <strong>{t("mediaTipBold")}</strong>
-          </summary>
-          {t("mediaTip")}
-        </details>
+        {/* phones: one short line that is always visible (a folded tip was not understood) */}
+        <p className="hint small media-tip media-short">
+          <strong>{t("mediaTipBold")}</strong> {t("mediaTipShort")}
+        </p>
         <button type="button" className="btn ghost" onClick={() => input.current?.click()} disabled={full}>
           {t("browseFiles")}
         </button>
