@@ -79,18 +79,27 @@ export function supportedAudioType(mime: string): string | null {
   return AUDIO_TYPES[mime.split(";")[0].trim().toLowerCase()] ?? null;
 }
 
+// A person is waiting with a recording, so a Gemini call must never hang until Vercel's 300-second limit kills it
+// (2026-11-22 it did: the browser then showed "Network error"). Every try gets a time limit. The main model gets one
+// retry and the fallback model one try, so the worst case is about a minute and then a clear error.
+const transcribeTimeoutMs = () => Number(process.env.GEMINI_TRANSCRIBE_TIMEOUT_MS) || 20_000;
+const tryOptions = (retries: number) => ({
+  timeout_ms: transcribeTimeoutMs(),
+  retries: retries > 0 ? { strategy: "attempt-count-backoff" as const, maxRetries: retries, retryConnectionErrors: true } : { strategy: "none" as const },
+});
+
 export async function transcribeAudio(base64: string, mimeType: string, language: string): Promise<string> {
   try {
-    return await transcribeWith(TRANSCRIBE_MODEL, base64, mimeType, language);
+    return await transcribeWith(TRANSCRIBE_MODEL, base64, mimeType, language, 1);
   } catch (err) {
-    // Busy or over the free limit: fall back to the everyday model rather than failing.
+    // Busy, stuck or over the free limit: fall back to the everyday model rather than failing.
     if (TRANSCRIBE_MODEL === MODEL) throw err;
     console.error(`Transcription with ${TRANSCRIBE_MODEL} failed, using ${MODEL}:`, (err as Error).message);
-    return transcribeWith(MODEL, base64, mimeType, language);
+    return transcribeWith(MODEL, base64, mimeType, language, 0);
   }
 }
 
-async function transcribeWith(model: string, base64: string, mimeType: string, language: string): Promise<string> {
+async function transcribeWith(model: string, base64: string, mimeType: string, language: string, retries: number): Promise<string> {
   const interaction = await client().interactions.create({
     model,
     input: [
@@ -103,7 +112,7 @@ Write exactly what was said, in the native script of the language spoken (Kannad
       { type: "audio", data: base64, mime_type: mimeType },
     ],
     generation_config: thinking,
-  });
+  }, tryOptions(retries));
   return (interaction.output_text ?? "").trim();
 }
 

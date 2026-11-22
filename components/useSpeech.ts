@@ -39,6 +39,8 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
         form.append("audio", blob, "recording");
         form.append("language", language);
         const res = await fetch("/api/transcribe", { method: "POST", body: form });
+        // A server or speech-service failure (5xx) is "try again", not "we didn't understand you".
+        if (res.status >= 500) return setError(t("micNetwork"));
         const data = await res.json();
         if (!res.ok) setError(t("micNotUnderstood"));
         else onText(data.transcript);

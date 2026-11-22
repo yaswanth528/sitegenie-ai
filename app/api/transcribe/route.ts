@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { limit } from "@/lib/ratelimit";
 import { supportedAudioType, transcribeAudio } from "@/lib/ai";
 
+// Each Gemini try is time-limited (lib/ai.ts), so the worst case is about a minute. Without this line Vercel would
+// wait 300 s and answer with an HTML 504 page, which the browser reported as "Network error".
+export const maxDuration = 90;
+
 const MAX_BYTES = 4 * 1024 * 1024; // ~4 MB keeps us under Vercel's request limit; 60 s of speech is far less
 
 export async function POST(req: Request) {
@@ -29,6 +33,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ transcript });
   } catch (err) {
     console.error(err);
-    return NextResponse.json({ error: (err as Error).message || "Transcription failed" }, { status: 502 });
+    const message = (err as Error).message || "";
+    // Stuck, slow or over the free limit: say so plainly (JSON, so the browser can show it) instead of a raw library error.
+    if (/timed out|timeout|aborted|429|quota|exhausted|overloaded|rate.?limit/i.test(message))
+      return NextResponse.json({ error: "The speech service is busy right now. Please try again in a moment." }, { status: 503 });
+    return NextResponse.json({ error: message || "Transcription failed" }, { status: 502 });
   }
 }
