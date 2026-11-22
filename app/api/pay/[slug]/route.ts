@@ -24,6 +24,7 @@ export async function POST(req: Request, { params }: Ctx) {
   const { renewal, charge } = chargeFor(site, !!body.renew);
   let paid: Site = site;
   if (charge > 0) {
+    let confirmedPaymentId = "";
     const provider = paymentProvider();
     if (provider === "off") return NextResponse.json({ error: "Online payment isn't connected yet. Please contact SiteGenie." }, { status: 501 });
 
@@ -45,15 +46,48 @@ export async function POST(req: Request, { params }: Ctx) {
           { status: ours ? 400 : 502 },
         );
       }
-      paid = withPayment(site, { charge, renewal, reference: paymentId, mode: razorpayMode(), gateway: "razorpay", paymentId });
-    } else {
-      paid = withPayment(site, { charge, renewal, reference: `TEST-${newId()}`, mode: "test", gateway: "simulated" });
+      confirmedPaymentId = paymentId;
     }
 
+    // Save the payment. The site can change at the same moment (Razorpay's webhook recording this same payment,
+    // or an edit in another tab). The money is already confirmed, so look again and retry instead of showing
+    // a customer who has paid an error. Never record one payment twice.
+    const message = `${provider === "razorpay" ? "Payment" : "Test payment"} ₹${charge} for ${slug}${renewal ? " (renewal)" : ""}`;
+    const make = (s: Site): Site =>
+      confirmedPaymentId
+        ? withPayment(s, { charge, renewal, reference: confirmedPaymentId, mode: razorpayMode(), gateway: "razorpay", paymentId: confirmedPaymentId })
+        : withPayment(s, { charge, renewal, reference: `TEST-${newId()}`, mode: "test", gateway: "simulated" });
     try {
-      await saveSite(paid, `${provider === "razorpay" ? "Payment" : "Test payment"} ₹${charge} for ${slug}${renewal ? " (renewal)" : ""}`, rev);
+      let current = { site, rev };
+      for (let attempt = 0; ; attempt++) {
+        if (confirmedPaymentId && current.site.payment?.paymentIds?.includes(confirmedPaymentId)) {
+          paid = current.site; // the webhook got here first
+          break;
+        }
+        if (attempt > 0 && chargeFor(current.site, !!body.renew).charge <= 0) {
+          // A different payment already settled what was due; this one can't be applied (needs a refund).
+          console.error(`Razorpay payment ${confirmedPaymentId} for ${slug} confirmed, but nothing was due any more.`);
+          paid = current.site;
+          break;
+        }
+        const next = make(current.site);
+        try {
+          await saveSite(next, message, current.rev);
+          paid = next;
+          break;
+        } catch (err) {
+          if (!(err instanceof ConflictError) || attempt >= 2) throw err;
+          const again = await getSiteRev(slug);
+          if (!again.site) throw err;
+          current = { site: again.site, rev: again.rev };
+        }
+      }
     } catch (err) {
-      if (err instanceof ConflictError) return NextResponse.json({ error: err.message }, { status: 409 });
+      if (err instanceof ConflictError) {
+        // Paid but still not saved after retrying: tell the panel to check this same payment again (no second charge).
+        if (confirmedPaymentId) return NextResponse.json({ error: "Your payment went through, but the website was busy being saved. Tap the button to check it again. You won't be charged twice." }, { status: 503 });
+        return NextResponse.json({ error: err.message }, { status: 409 });
+      }
       console.error(err);
       return NextResponse.json({ error: "Couldn't record the payment. Try again." }, { status: 502 });
     }
