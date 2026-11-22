@@ -1,5 +1,6 @@
 "use client";
 import { useT } from "./I18nProvider";
+import { Hustle } from "./create/Hustle";
 import { useSpeech } from "./useSpeech";
 
 export function MicButton({ language, onText, onAudio, label }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void; label?: string }) {
@@ -16,7 +17,7 @@ export function MicButton({ language, onText, onAudio, label }: { language: stri
         aria-busy={state === "transcribing"}
         aria-pressed={state === "recording"}
       >
-        <span className="mic-dot" aria-hidden />
+        {state === "transcribing" ? <Hustle mini /> : <span className="mic-dot" aria-hidden />}
         {state === "recording" ? `${t("micStop")} · 0:${String(seconds).padStart(2, "0")}` : state === "transcribing" ? t("micWriting") : (label ?? t("micTap"))}
       </button>
       {error && <p className="error">{error}</p>}

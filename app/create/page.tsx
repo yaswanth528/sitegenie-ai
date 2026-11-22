@@ -7,6 +7,7 @@ import { MediaPicker } from "@/components/MediaPicker";
 import ShinyText from "@/components/bits/ShinyText/ShinyText";
 import { AmbientBg } from "@/components/AmbientBg";
 import { Assembling } from "@/components/create/Assembling";
+import { Hustle } from "@/components/create/Hustle";
 import { Confetti } from "@/components/create/Confetti";
 import { MicOrb } from "@/components/create/MicOrb";
 import { MicButton } from "@/components/MicButton";
@@ -378,7 +379,9 @@ export default function CreatePage() {
 
         {stage === "checking" && (
           <div className="cf-center" aria-live="polite">
-            <div className="cf-pulse" aria-hidden="true" />
+            <div className="hg-spot">
+              <Hustle variant="carry" />
+            </div>
             <h1>{t("checkingTitle")}</h1>
             <p className="cf-lead">{t("checkingLead")}</p>
             <Rotating className="cf-muted" lines={[t("checking1"), t("checking2"), t("checking3"), t("checking4")]} />

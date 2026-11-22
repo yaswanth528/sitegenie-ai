@@ -3,6 +3,7 @@
 // follow the owner's voice live (Web Audio analyser), so they can see it's listening.
 import { useEffect, useRef } from "react";
 import { useT } from "../I18nProvider";
+import { Hustle } from "./Hustle";
 import { useSpeech } from "../useSpeech";
 
 const BARS = 32;
@@ -76,11 +77,18 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
           ×
         </button>
       )}
-      <div className="cf-wave" aria-hidden="true">
-        {Array.from({ length: BARS }, (_, i) => (
-          <span key={i} ref={(el) => void (bars.current[i] = el)} />
-        ))}
-      </div>
+      {state === "transcribing" ? (
+        // While the words are being written down, a helper hurries so the wait feels short and a bit funny.
+        <div className="hg-spot">
+          <Hustle variant="run" />
+        </div>
+      ) : (
+        <div className="cf-wave" aria-hidden="true">
+          {Array.from({ length: BARS }, (_, i) => (
+            <span key={i} ref={(el) => void (bars.current[i] = el)} />
+          ))}
+        </div>
+      )}
       <p className="cf-mic-label" aria-live="polite">
         {recording
           ? t("micListening", { time: `0:${String(seconds).padStart(2, "0")}`, left: left <= 10 ? t("micLeft", { s: left }) : "" })
