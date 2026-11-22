@@ -22,6 +22,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
   const recorder = useRef<MediaRecorder | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const discard = useRef(false); // the owner tapped the small cross: throw the recording away
+  const uploading = useRef<AbortController | null>(null); // the request in flight, so the owner can stop waiting
 
   useEffect(() => {
     setSupported(typeof window !== "undefined" && !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== "undefined");
@@ -34,19 +35,22 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
   const upload = useCallback(
     async (blob: Blob) => {
       setState("transcribing");
+      const ctl = new AbortController();
+      uploading.current = ctl;
       try {
         const form = new FormData();
         form.append("audio", blob, "recording");
         form.append("language", language);
-        const res = await fetch("/api/transcribe", { method: "POST", body: form });
+        const res = await fetch("/api/transcribe", { method: "POST", body: form, signal: ctl.signal });
         // A server or speech-service failure (5xx) is "try again", not "we didn't understand you".
         if (res.status >= 500) return setError(t("micNetwork"));
         const data = await res.json();
         if (!res.ok) setError(t("micNotUnderstood"));
         else onText(data.transcript);
       } catch {
-        setError(t("micNetwork"));
+        if (!ctl.signal.aborted) setError(t("micNetwork")); // stopped by the owner: no error message
       } finally {
+        if (uploading.current === ctl) uploading.current = null;
         setState("idle");
       }
     },
@@ -65,6 +69,9 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
     setSeconds(0);
   }, []);
 
+  // The owner got tired of waiting: drop the request and go back to the start (they can record again or type).
+  const cancelUpload = useCallback(() => uploading.current?.abort(), []);
+
   const start = useCallback(async () => {
     setError(null);
     let stream: MediaStream;
@@ -75,7 +82,8 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
       return;
     }
     const mimeType = pickMimeType();
-    const rec = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+    // 48 kbps is plenty for speech and makes the upload about a third of the browser's default size (slow phone data).
+    const rec = new MediaRecorder(stream, { ...(mimeType ? { mimeType } : {}), audioBitsPerSecond: 48_000 });
     const chunks: Blob[] = [];
     rec.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     rec.onstop = () => {
@@ -111,7 +119,7 @@ export function useSpeech(language: string, onText: (text: string) => void, onAu
     }, 1000);
   }, [stop, upload, onAudio, t]);
 
-  return { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds: MAX_SECONDS };
+  return { supported, state, seconds, error, start, stop, cancel, cancelUpload, stream, maxSeconds: MAX_SECONDS };
 }
 
 // The language name is passed to Gemini as a hint; the code is for read-back speech.

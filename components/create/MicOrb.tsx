@@ -10,7 +10,7 @@ const BARS = 32;
 
 export function MicOrb({ language, onText, onAudio }: { language: string; onText: (t: string) => void; onAudio?: (b: Blob) => void }) {
   const t = useT();
-  const { supported, state, seconds, error, start, stop, cancel, stream, maxSeconds } = useSpeech(language, onText, onAudio);
+  const { supported, state, seconds, error, start, stop, cancel, cancelUpload, stream, maxSeconds } = useSpeech(language, onText, onAudio);
   const bars = useRef<(HTMLSpanElement | null)[]>([]);
   const orb = useRef<HTMLButtonElement>(null);
 
@@ -69,9 +69,10 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
           // While the words are being written down, a little runner hurries inside the button, where the mic icon was.
           <Hustle variant="run" orb />
         ) : (
-          <svg viewBox="0 0 24 24" width="44" height="44" aria-hidden="true">
-            <rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="currentColor" />
-            <path d="M5 11a7 7 0 0 0 14 0M12 18v3.5M8.5 21.5h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <svg className="cf-orb-wave" viewBox="0 0 48 48" width="52" height="52" aria-hidden="true">
+            {[8, 15, 22, 29, 36].map((x, i) => (
+              <line key={x} x1={x + 2} x2={x + 2} y1={24 - [6, 13, 19, 13, 6][i]} y2={24 + [6, 13, 19, 13, 6][i]} stroke="currentColor" strokeWidth="4.2" strokeLinecap="round" style={{ animationDelay: `${i * 0.12}s` }} />
+            ))}
           </svg>
         )}
       </button>
@@ -92,6 +93,11 @@ export function MicOrb({ language, onText, onAudio }: { language: string; onText
             ? t("micWriting")
             : t("micTap")}
       </p>
+      {state === "transcribing" && (
+        <button type="button" className="cf-mic-stop" onClick={cancelUpload}>
+          {t("micCancelTitle")}
+        </button>
+      )}
       {error && <p className="cf-error">{error}</p>}
     </div>
   );

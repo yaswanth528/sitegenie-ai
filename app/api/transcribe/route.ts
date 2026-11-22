@@ -27,8 +27,11 @@ export async function POST(req: Request) {
   if (!mime) return NextResponse.json({ error: `This browser's audio format (${audio.type}) isn't supported.` }, { status: 415 });
 
   try {
+    const t0 = Date.now();
     const base64 = Buffer.from(await audio.arrayBuffer()).toString("base64");
     const transcript = await transcribeAudio(base64, mime, language);
+    // Shows in the Vercel runtime logs, so "why was that slow?" can be answered from numbers (upload time is before this).
+    console.log(`transcribe: ${Date.now() - t0} ms in Gemini, ${Math.round(audio.size / 1024)} KB of ${mime}, region ${process.env.VERCEL_REGION ?? "local"}`);
     if (!transcript) return NextResponse.json({ error: "We couldn't hear any speech. Try again a little closer to the phone." }, { status: 422 });
     return NextResponse.json({ transcript });
   } catch (err) {

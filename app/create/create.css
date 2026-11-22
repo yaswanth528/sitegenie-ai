@@ -310,3 +310,11 @@
 .cf-mic-x { position: absolute; top: 0; right: calc(50% - 82px); width: 26px; height: 26px; padding: 0; border-radius: 50%; border: 1px solid var(--cf-muted); background: transparent; color: var(--cf-muted); font-size: 16px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
 .cf-mic-x:hover { color: #b3261e; border-color: #b3261e; }
 .rec-tag { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 99px; background: rgba(18, 163, 163, 0.14); color: #0b7a7a; font-size: 0.75rem; font-weight: 700; vertical-align: middle; }
+
+/* the wave that replaces the mic icon: its bars rise and fall a little while idle */
+.cf-orb-wave line { transform-box: fill-box; transform-origin: center; animation: cf-wavebar 1.3s ease-in-out infinite; }
+@keyframes cf-wavebar { 0%, 100% { transform: scaleY(0.55); } 50% { transform: scaleY(1); } }
+/* stop waiting for the words to come back */
+.cf-mic-stop { border: 1.5px solid rgba(11, 93, 122, 0.45); background: #fff; color: #0b5d7a; font: inherit; font-weight: 700; padding: 8px 18px; border-radius: 999px; cursor: pointer; }
+.cf-mic-stop:hover { background: #eef7f8; }
+@media (prefers-reduced-motion: reduce) { .cf-orb-wave line { animation: none; } }
