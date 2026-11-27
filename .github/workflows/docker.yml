@@ -1,0 +1,35 @@
+name: Docker
+
+# Proves the way the hackathon judges start the app: docker compose up, no .env, no keys.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  compose-up:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start with no .env and no keys
+        run: docker compose up -d --build
+      - name: Main screen answers on port 3000
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /tmp/home.html -w "%{http_code}" http://localhost:3000/ || true)
+            [ "$code" = "200" ] && break
+            sleep 2
+          done
+          echo "GET / -> $code"
+          [ "$code" = "200" ]
+          grep -qi "sitegenie" /tmp/home.html
+      - name: Voice says key not set instead of crashing
+        run: |
+          head -c 2000 /dev/urandom > /tmp/a.webm
+          out=$(curl -s -X POST http://localhost:3000/api/transcribe -F "audio=@/tmp/a.webm;type=audio/webm")
+          echo "$out"
+          echo "$out" | grep -q "GEMINI_API_KEY is not set"
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --tail=100

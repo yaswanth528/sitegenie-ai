@@ -1,0 +1,23 @@
+# Start SiteGenie with:  docker compose up --build   then open http://localhost:3000
+# It starts with no keys and no .env file. Voice features say "key not set" until you add
+# GEMINI_API_KEY (copy .env.example to .env and fill it in).
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      STORAGE: local
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY:-}
+      PIXABAY_API_KEY: ${PIXABAY_API_KEY:-}
+      PEXELS_API_KEY: ${PEXELS_API_KEY:-}
+    volumes:
+      - sitegenie-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  sitegenie-data:

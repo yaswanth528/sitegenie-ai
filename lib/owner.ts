@@ -1,6 +1,6 @@
 // Owner login by WhatsApp code, and the one rule for "may this request edit this site":
 // either the site's private edit key, or a logged-in session for the site's WhatsApp number.
-import { createHash, createHmac, randomInt, timingSafeEqual } from "node:crypto";
+import { createHash, createHmac, randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import type { Site } from "./schema";
 import { keyMatches } from "./store";
 
@@ -9,10 +9,17 @@ const SESSION_DAYS = 30;
 export const CODE_MINUTES = 10;
 export const MAX_ATTEMPTS = 5;
 
+let _ephemeral: string | null = null;
+
 // Secret for signing sessions. Set AUTH_SECRET; otherwise derived from other server secrets.
 function secret(): string {
   const s = process.env.AUTH_SECRET || process.env.GEMINI_API_KEY || process.env.CLOUDFLARE_API_TOKEN || process.env.GITHUB_TOKEN;
-  if (!s) throw new Error("Set AUTH_SECRET to enable owner login.");
+  if (!s) {
+    // Deployed (Vercel) must have a real secret. Anywhere else, a keyless demo or local Docker run
+    // gets a random one per process: logins simply end when the server restarts.
+    if (process.env.VERCEL) throw new Error("Set AUTH_SECRET to enable owner login.");
+    return (_ephemeral ??= randomBytes(32).toString("hex"));
+  }
   return createHash("sha256").update(`sitegenie-owner:${s}`).digest("hex");
 }
 

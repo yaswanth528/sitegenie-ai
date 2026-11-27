@@ -10,3 +10,7 @@ next-env.d.ts
 data/
 # Copied from the project root by scripts/sync-images.mjs
 public/images/
+
+# Runtime shop data (written by the GitHub storage backend); never commit real customers
+catalogues/
+backups/

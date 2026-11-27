@@ -24,7 +24,7 @@ function client() {
     throw new Error(
       process.env.VERCEL
         ? "GEMINI_API_KEY is not set. Add it in Vercel → Settings → Environment Variables, then redeploy."
-        : "GEMINI_API_KEY is not set. Add it to .env.local and restart.",
+        : "GEMINI_API_KEY is not set. Copy .env.example to .env (or .env.local), add the key, and restart (docker compose up --build, or npm run dev).",
     );
   return (_client ??= new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }));
 }

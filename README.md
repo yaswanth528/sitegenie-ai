@@ -13,8 +13,15 @@ Voice-to-Page for MSMEs. An owner speaks for about 20 seconds and gets a shareab
 
 AI is used only for messy speech (steps 2 and 6). Everything else is deterministic code in `lib/catalogue.ts`.
 
-## Run it
+## Run it with Docker (no keys needed)
 
+```bash
+docker compose up --build
+```
+
+Open http://localhost:3000. The app starts and shows its main screen with no `.env` file and no keys; the voice features answer "GEMINI_API_KEY is not set" until you add one. To turn voice on, copy `.env.example` to `.env`, fill in `GEMINI_API_KEY`, and run the same command again. Shop data is kept in a Docker volume (`sitegenie-data`).
+
+## Run it without Docker
 ```bash
 npm install
 cp .env.example .env.local   # add GEMINI_API_KEY
@@ -46,7 +53,7 @@ Payments/UPI, address capture, logins, custom domains and analytics (per the MVP
 | `ADMIN_PASSWORD` | Admin panel at `/admin` |
 | `WHATSAPP_TOKEN` + `WHATSAPP_PHONE_NUMBER_ID` + `AUTH_SECRET` | Owner login with a WhatsApp code |
 | `CRON_SECRET` | Daily job: cleanup, renewal reminders, Sunday backup |
-| `GITHUB_TOKEN` + `GITHUB_REPO` | Weekly database backups into this private repo (`backups/`) |
+| `GITHUB_TOKEN` + `GITHUB_REPO` | Weekly database backups into a separate **private** repo (`backups/`); never point this at a public repo |
 | `BREVO_API_KEY` + `ALERT_FROM_EMAIL` | New-order and renewal emails to owners |
 | `SUPPORT_EMAIL` | Contact address on the Privacy and Terms pages |
 
