@@ -5,12 +5,14 @@ import { UI_EN } from "./i18n";
 import { referencePrompt } from "./references";
 import {
   GapCheckSchema,
+  OrderMatchSchema,
   PatchSchema,
   RevisionSchema,
   type Revision,
   SitePlanSchema,
   TranslationSchema,
   type GapCheck,
+  type OrderMatch,
   type Patch,
   type Product,
   type SiteContent,
@@ -334,4 +336,32 @@ Current website (JSON):
 ${JSON.stringify(current)}
 
 Owner said: ${request}`, MODEL, "low");
+}
+
+
+// ---------- Customer voice ordering ----------
+
+const ORDER_RULES = `You match a customer's spoken or typed order to a small shop's product list. The customer may speak any Indian language, English, or a mix, and the sentence may come from speech recognition, so words can be misspelled.
+- Give one entry in "orders" for each different thing the customer asked for, in the order said.
+- "index" is the number of the matching product in the list. Match by meaning, across languages and spellings (for example "sari" is a saree, "ಕುರ್ತಿ" is a kurti). If the shop does not sell what was asked for, use index null; never pick a different product just to have a match.
+- "qty" is how many, as a number ("a dozen" is 12, "ek kilo" is 1). Use null only if no amount was said.
+- "option" is the size, weight or colour the customer said, copied exactly from that product's "options" list. null if none was said or the product has no options. Never invent an option that is not in the list.
+- Do not add anything the customer did not ask for, and do not repeat an entry.
+- "heard" is the part of the sentence this entry is about.`;
+
+// Ask Gemini to match a spoken order to the shop's products. The caller still runs resolveMatches() on the answer:
+// the model is never trusted with indexes, stock, quantities or prices.
+export async function matchOrder(items: Product[], transcript: string): Promise<OrderMatch["orders"]> {
+  const list = items.map((it, i) => ({ index: i, name: it.name, unit: it.unit ?? null, options: it.options ?? [], category: it.category ?? null }));
+  const result = await generateJson(
+    OrderMatchSchema,
+    `${ORDER_RULES}
+
+Products (JSON):
+${JSON.stringify(list)}
+
+Customer said: ${transcript}`,
+    MODEL,
+  );
+  return result.orders;
 }

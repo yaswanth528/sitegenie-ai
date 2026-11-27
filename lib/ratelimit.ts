@@ -59,6 +59,7 @@ export const LIMITS = {
   translate: { limit: 10, windowSec: 3600 },
   transcribe: { limit: 30, windowSec: 3600 },
   voiceEdit: { limit: 30, windowSec: 3600 },
+  voiceOrder: { limit: 40, windowSec: 3600 }, // a shopper fixing a few orders; the matcher is cheap, so more than builds
   upload: { limit: 40, windowSec: 3600 },
   publish: { limit: 20, windowSec: 3600 },
   order: { limit: 10, windowSec: 600 },

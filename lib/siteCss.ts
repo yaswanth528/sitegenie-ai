@@ -465,6 +465,31 @@ export const SITE_CSS = `
 .s-errors p { color: #b42318; font-size: .92rem; }
 .s-placed { display: grid; gap: 16px; }
 
+/* Order by voice (customers) */
+.s-vo-open { margin-top: 14px; }
+.s-vo { gap: 12px; }
+.site .s-vo select, .site .s-vo textarea {
+  width: 100%; font: inherit; color: var(--s-ink); background: var(--s-surface);
+  border: 1px solid var(--s-line); border-radius: 10px; padding: 10px 12px;
+}
+.s-vo textarea { resize: vertical; min-height: 84px; }
+.s-vo-label { font-weight: 600; font-size: .92rem; margin-top: 6px; }
+.s-vo-mic {
+  display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 64px;
+  border: 0; border-radius: 999px; background: var(--s-accent); color: var(--s-accent-ink);
+  font: inherit; font-size: 1.05rem; font-weight: 700; cursor: pointer;
+}
+.s-vo-mic:disabled { opacity: .6; cursor: wait; }
+.s-vo-mic.on { background: #c0392b; color: #fff; }
+.s-vo-dot { width: 14px; height: 14px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.s-vo-mic.on .s-vo-dot { animation: s-vo-pulse 1s ease-in-out infinite; }
+@keyframes s-vo-pulse { 50% { transform: scale(1.5); opacity: .55; } }
+.s-vo-result { display: grid; gap: 12px; }
+.s-vo-line { align-items: center; }
+.s-vo-line > div:first-child { display: grid; gap: 4px; }
+.s-vo-note { font-size: .92rem; padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--s-accent) 10%, var(--s-bg)); border: 1px solid var(--s-line); }
+@media (prefers-reduced-motion: reduce) { .s-vo-mic.on .s-vo-dot { animation: none; } }
+
 /* Language switch */
 .s-lang {
   flex-shrink: 0; border: 1px solid var(--s-line); background: var(--s-surface); color: var(--s-ink);

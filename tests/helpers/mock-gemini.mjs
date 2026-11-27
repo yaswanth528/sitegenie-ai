@@ -85,11 +85,12 @@ function kindOf(body) {
   if (text.includes("turn a business owner's spoken edit request into a patch")) return "interpretEdit";
   if (text.includes("You are editing a small business's website")) return "revise";
   if (text.includes("Translate this small shop's website text")) return "translate";
+  if (text.includes("You match a customer's spoken or typed order")) return "matchOrder";
   return "unknown";
 }
 
 export async function startMockGemini() {
-  const state = { calls: [], transcript: SAMPLE_TRANSCRIPT, gaps: [], failNext: [], failAll: false, hangNext: [], hangAll: false };
+  const state = { calls: [], orderMatches: [], transcript: SAMPLE_TRANSCRIPT, gaps: [], failNext: [], failAll: false, hangNext: [], hangAll: false };
   const hung = new Set(); // requests the fake never answers (a stuck Gemini), closed when the fake shuts down
   const server = http.createServer(async (req, res) => {
     let raw = "";
@@ -126,6 +127,7 @@ export async function startMockGemini() {
     else if (kind === "plan") steps = text(JSON.stringify(PLAN));
     else if (kind === "interpretEdit") steps = text(JSON.stringify(PATCH));
     else if (kind === "revise") steps = text(JSON.stringify(REVISION));
+    else if (kind === "matchOrder") steps = text(JSON.stringify({ orders: state.orderMatches }));
     else if (kind === "image") steps = [{ type: "model_output", content: [{ type: "image", data: TINY_JPEG, mime_type: "image/jpeg" }] }];
     else steps = text("{}");
     res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify({ id: `mock_${state.calls.length}`, status: "completed", model: body.model, steps }));

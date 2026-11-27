@@ -132,6 +132,19 @@ export const RevisionSchema = z.object({
 });
 export type Revision = z.infer<typeof RevisionSchema>;
 
+// What the model returns when a customer says what they want to order: one entry per thing said.
+export const OrderMatchSchema = z.object({
+  orders: z.array(
+    z.object({
+      index: z.number().nullable().describe("Index of the matching product in the list; null if the shop doesn't sell what was said"),
+      qty: z.number().nullable().describe("How many, as a number; null if no number was said"),
+      option: z.string().nullable().describe("The size, weight or colour said, written exactly as in that product's options list; null if none said or the product has no options"),
+      heard: z.string().describe("The words from the sentence that this entry is about, in the customer's own language"),
+    }),
+  ),
+});
+export type OrderMatch = z.infer<typeof OrderMatchSchema>;
+
 export type Item = z.infer<typeof ItemSchema>;
 export type SitePlan = z.infer<typeof SitePlanSchema>;
 export type Patch = z.infer<typeof PatchSchema>;

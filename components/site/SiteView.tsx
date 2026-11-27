@@ -12,6 +12,7 @@ import { aboutFacts, askText, badgeLabel, cssUrl, FEST_ICON, festGreeting, heroM
 import { SITE_CSS } from "@/lib/siteCss";
 import { themeVars } from "@/lib/themes";
 import { lookAttrs, lookFor } from "@/lib/look";
+import { VoiceOrder, type VoiceLine } from "./VoiceOrder";
 
 type Props = {
   site: SiteContent & { whatsapp: string; slug?: string };
@@ -141,6 +142,20 @@ export function SiteView({ site, preview }: Props) {
       if (!n) delete next[key];
       return next;
     });
+
+  // Lines the customer confirmed in "Order by voice": add them to the cart, then show it (store) or the order bar (showcase).
+  const addVoiceLines = (voice: VoiceLine[]) => {
+    setCart((c) => {
+      const next = { ...c };
+      for (const v of voice) {
+        if (v.index < 0 || v.index >= site.items.length) continue;
+        const key = keyOf(v.index, v.optionIndex);
+        next[key] = Math.min(99, (next[key] ?? 0) + v.qty);
+      }
+      return next;
+    });
+    if (dynamic) setCartOpen(true);
+  };
 
   // Lines use the main-language names so orders read the same for the owner whichever
   // language the customer browsed in.
@@ -363,6 +378,9 @@ export function SiteView({ site, preview }: Props) {
             <div className="s-section-head">
               <h2>{dynamic ? u.shop : u.products}</h2>
               <p>{quote ? u.pickHintQuote : dynamic ? u.cartHint : u.pickHint}</p>
+              {site.slug && !preview && !quote && (
+                <VoiceOrder slug={site.slug} language={alt && site.translation ? site.translation.language : site.language} onAdd={addVoiceLines} />
+              )}
             </div>
             {(categories.length > 1 || showSearch) && (
             <div className="s-toolbar">
