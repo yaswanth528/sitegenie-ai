@@ -53,11 +53,13 @@ Prices and products always come from the saved shop, never from the sentence or 
 
 ### Try it
 
-Voice ordering shows on a published shop page (`/p/<slug>`), not on the home-page preview. Creating a shop uses Gemini, so you need a `GEMINI_API_KEY` for that step. Then:
+Open **http://localhost:3000/p/demo** (or https://sitegenie-ai.vercel.app/p/demo). This is a built-in demo shop that needs no account and no key.
 
-1. Open `/create`, speak or type a shop description with a few items and prices, and publish.
-2. Open the public link, tap **Order by voice**, and speak or type an order.
+1. Tap **Order by voice** in the products section.
+2. Type an order, such as `two cotton sarees and one printed kurti`, or `one cotton kurti size L`. With a `GEMINI_API_KEY` set you can also tap the mic and speak it.
 3. Check the list, then tap **Add to cart**.
+
+The demo shop lives in code (`lib/demo.ts`), is never saved, and has no phone number, so nothing is sent to anyone. For a real shop, open `/create`, speak or type a shop description (needs `GEMINI_API_KEY`), publish, and use the public link.
 
 ### Tests
 
