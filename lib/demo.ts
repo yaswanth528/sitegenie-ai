@@ -1,6 +1,6 @@
 // Demo website for the home page: shows what SiteGenie makes. Deliberately named "Your shop"
 // (no invented business names); photos are Unsplash stock, credited on the demo site.
-import type { SiteContent } from "./schema";
+import type { Site, SiteContent } from "./schema";
 
 const U = (id: string) => `https://images.unsplash.com/${id}?w=700&q=70&auto=format&fm=jpg`;
 const photo = (id: string, alt: string) => ({ url: U(id), kind: "image" as const, generated: true, alt, credit: "Photo: Unsplash" });
@@ -76,3 +76,11 @@ export const DEMO_MENU: SiteContent & { whatsapp: string } = {
     item("Khara boondi", 220, { unit: "per kg", category: "Namkeen", badge: "new" }),
   ],
 };
+
+// A built-in shop at /p/demo so anyone can try "Order by voice" with no account, no key and no saved data.
+// It lives in code, never in storage: it can't be edited, paid for or ordered from, and its WhatsApp number
+// is empty so nothing is ever sent to a real person.
+export const DEMO_SLUG = "demo";
+export function demoSite(): Site {
+  return { ...DEMO, whatsapp: "", slug: DEMO_SLUG, editKeyHash: "", updatedAt: "2026-11-28T00:00:00.000Z" };
+}

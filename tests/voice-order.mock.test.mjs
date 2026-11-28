@@ -252,3 +252,26 @@ test("17. a very long order is cut off before matching; nothing real was contact
   assert.equal(res.status, 200);
   assert.deepEqual([...blockedHosts], []);
 });
+
+test("18. the built-in demo shop (/p/demo) takes a typed order with no key and no saved shop", async () => {
+  const key = process.env.GEMINI_API_KEY;
+  delete process.env.GEMINI_API_KEY;
+  try {
+    const res = await route.POST(post({ transcript: "two cotton sarees and one printed kurti" }), ctx("demo"));
+    assert.equal(res.status, 200);
+    const body = await res.json();
+    assert.equal(body.via, "local");
+    assert.deepEqual(body.lines.map((l) => [l.index, l.qty]), [[1, 2], [2, 1]]);
+    const sized = await (await route.POST(post({ transcript: "one cotton kurti size L" }), ctx("demo"))).json();
+    assert.deepEqual(sized.lines.map((l) => [l.index, l.qty, l.option]), [[3, 1, "L"]]);
+  } finally {
+    process.env.GEMINI_API_KEY = key;
+  }
+});
+
+test("19. the demo shop is shown to visitors only: saving, ordering and editing never see it", async () => {
+  const demo = await load("lib/demo.ts");
+  assert.equal((await store.getPublicSite("demo"))?.slug, demo.DEMO_SLUG);
+  assert.equal((await store.getPublicSite("demo")).whatsapp, "", "no real phone number to message");
+  assert.equal(await store.getSite("demo"), null, "getSite (used by orders, payments, deploys, edits) must not return the demo");
+});

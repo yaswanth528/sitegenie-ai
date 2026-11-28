@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FeatureTile, FinalGlow, Greatest, HeroSub, HeroTitle, Kicker, MotionProvider, ShopMarquee } from "@/components/landing/Bits";
 import { Reveal } from "@/components/landing/Reveal";
+import { VoiceBand } from "@/components/landing/VoiceBand";
 import { StickyCta } from "@/components/landing/StickyCta";
 import { TalkButton } from "@/components/CustomEnquiry";
 import { LanguageSwitcher, T } from "@/components/I18nProvider";
@@ -233,6 +234,8 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <VoiceBand />
 
         <section className="lp-pricing" id="pricing">
           <div className="lp-inner">

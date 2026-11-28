@@ -3,7 +3,7 @@
 import { ImageResponse } from "next/og";
 import sharp from "sharp";
 import { THEMES } from "@/lib/themes";
-import { getSite } from "@/lib/store";
+import { getPublicSite } from "@/lib/store";
 
 const FAMILY: Record<string, string> = {
   boutique: "Cormorant Garamond",
@@ -41,7 +41,7 @@ const SCRIPTS: [RegExp, string][] = [
 
 export async function GET(_req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const s = await getSite(slug);
+  const s = await getPublicSite(slug);
   if (!s) return new Response("Not found", { status: 404 });
 
   const theme = THEMES[s.theme.id] ?? THEMES.bazaar;

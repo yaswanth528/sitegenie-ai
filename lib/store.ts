@@ -8,6 +8,7 @@ import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { d1Ready, execute, query } from "./d1";
+import { DEMO_SLUG, demoSite } from "./demo";
 import type { Order, Site } from "./schema";
 
 const { GITHUB_TOKEN, GITHUB_REPO, GITHUB_BRANCH = "main" } = process.env;
@@ -225,6 +226,13 @@ function upgrade(doc: Site): Site {
 export async function getSite(slug: string): Promise<Site | null> {
   const doc = validSlug(slug) ? await readDoc<Site>(`catalogues/${slug}.json`) : null;
   return doc ? upgrade(doc) : null;
+}
+
+// What a visitor may look at: the built-in demo shop, or a saved site. Only the public page, its share image and
+// voice ordering use this. Everything that saves, pays, deploys or edits keeps using getSite, which never
+// returns the demo.
+export async function getPublicSite(slug: string): Promise<Site | null> {
+  return slug === DEMO_SLUG ? demoSite() : getSite(slug);
 }
 
 // The site together with its version, for edits that must not overwrite someone else's.

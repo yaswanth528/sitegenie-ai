@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { matchOrder } from "@/lib/ai";
 import { limit } from "@/lib/ratelimit";
-import { getSite, validSlug } from "@/lib/store";
+import { getPublicSite, validSlug } from "@/lib/store";
 import { MAX_TRANSCRIPT, matchLocally, resolveMatches, type RawMatch } from "@/lib/voiceOrder";
 
 // A customer says (or types) what they want. We work out which of this shop's products they mean and send back
@@ -37,7 +37,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
   }
   if (transcript.length < 2) return NextResponse.json({ error: "We didn't catch what you want. Try again, or type it." }, { status: 400 });
 
-  const site = await getSite(slug);
+  const site = await getPublicSite(slug);
   if (!site) return NextResponse.json({ error: "Shop not found." }, { status: 404 });
   if (!site.items.length) return NextResponse.json({ error: "This shop has no products yet." }, { status: 409 });
 

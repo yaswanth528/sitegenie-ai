@@ -263,3 +263,19 @@ html:not(.lp-motion) .lp-line:nth-child(2), html:not(.lp-motion) .lp-line:nth-ch
   .lp-sticky .lp-pill { box-shadow: 0 14px 30px -10px rgba(11, 93, 122, 0.7); }
 }
 @media (prefers-reduced-motion: reduce) { .lp-sticky { transition: none; } }
+
+/* Order by voice band */
+.lp-voice { background: var(--lp-bg-2); padding-block: clamp(52px, 7vw, 96px); }
+.lp-voice-grid { display: grid; gap: clamp(28px, 5vw, 56px); grid-template-columns: minmax(0, 1fr); align-items: center; }
+@media (min-width: 860px) { .lp-voice-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); } }
+.lp-voice h2 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.06; font-weight: 750; margin: 8px 0 14px; }
+.lp-voice .lp-kicker { color: var(--lp-saffron); }
+.lp-voice .lp-sub { text-align: left; max-width: 52ch; margin-inline: 0; }
+.lp-voice-cta { justify-content: flex-start; margin-top: 22px; }
+.lp-voice-note { margin-top: 12px; color: var(--lp-muted); font-size: 0.95rem; }
+.lp-voice-card { background: var(--lp-card); border: 1px solid var(--lp-line); border-radius: 28px; padding: 28px; display: grid; gap: 10px; box-shadow: 0 24px 60px -34px rgba(13, 43, 54, 0.45); }
+.lp-voice-label { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--lp-muted); margin-top: 6px; }
+.lp-voice-said { font-size: 1.25rem; font-weight: 650; line-height: 1.35; color: var(--lp-ink); }
+.lp-voice-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--lp-bg); border: 1px solid var(--lp-line); font-size: 1.02rem; }
+.lp-voice-add { margin-top: 8px; text-align: center; padding: 13px; border-radius: 999px; background: var(--lp-indigo); color: var(--lp-on-indigo); font-weight: 700; }
+@media (max-width: 520px) { .lp-voice { padding-block: 40px; } }
